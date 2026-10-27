@@ -1,0 +1,61 @@
+{
+  "lastUpdated": "2026-10-11",
+  "codeforces": {
+    "handle": "Sarthak14313",
+    "profileUrl": "https://codeforces.com/profile/Sarthak14313",
+    "rank": "specialist",
+    "rating": 1434,
+    "maxRating": 1434,
+    "maxRank": "specialist",
+    "history": [
+      { "contestId": 2037, "contestName": "Codeforces Round 988 (Div. 3)", "ratingUpdateTimeSeconds": 1731862200, "newRating": 349 },
+      { "contestId": 2042, "contestName": "Educational Codeforces Round 172 (Rated for Div. 2)", "ratingUpdateTimeSeconds": 1733157300, "newRating": 571 },
+      { "contestId": 2050, "contestName": "Codeforces Round 991 (Div. 3)", "ratingUpdateTimeSeconds": 1733417400, "newRating": 718 },
+      { "contestId": 2040, "contestName": "Codeforces Round 992 (Div. 2)", "ratingUpdateTimeSeconds": 1733675700, "newRating": 782 },
+      { "contestId": 2044, "contestName": "Codeforces Round 993 (Div. 4)", "ratingUpdateTimeSeconds": 1734281400, "newRating": 854 },
+      { "contestId": 2048, "contestName": "Codeforces Global Round 28", "ratingUpdateTimeSeconds": 1734629700, "newRating": 901 },
+      { "contestId": 2049, "contestName": "Codeforces Round 994 (Div. 2)", "ratingUpdateTimeSeconds": 1734712500, "newRating": 805 },
+      { "contestId": 2051, "contestName": "Codeforces Round 995 (Div. 3)", "ratingUpdateTimeSeconds": 1734886200, "newRating": 776 },
+      { "contestId": 2043, "contestName": "Educational Codeforces Round 173 (Rated for Div. 2)", "ratingUpdateTimeSeconds": 1735058100, "newRating": 680 },
+      { "contestId": 2060, "contestName": "Codeforces Round 998 (Div. 3)", "ratingUpdateTimeSeconds": 1737306300, "newRating": 670 },
+      { "contestId": 2078, "contestName": "Codeforces Round 1008 (Div. 2)", "ratingUpdateTimeSeconds": 1741626900, "newRating": 725 },
+      { "contestId": 2074, "contestName": "Codeforces Round 1009 (Div. 3)", "ratingUpdateTimeSeconds": 1741712700, "newRating": 725 },
+      { "contestId": 2093, "contestName": "Codeforces Round 1016 (Div. 3)", "ratingUpdateTimeSeconds": 1744131000, "newRating": 836 },
+      { "contestId": 2094, "contestName": "Codeforces Round 1017 (Div. 4)", "ratingUpdateTimeSeconds": 1744566600, "newRating": 864 },
+      { "contestId": 2096, "contestName": "Neowise Labs Contest 1 (Codeforces Round 1018)", "ratingUpdateTimeSeconds": 1745080500, "newRating": 922 },
+      { "contestId": 2103, "contestName": "Codeforces Round 1019 (Div. 2)", "ratingUpdateTimeSeconds": 1745253300, "newRating": 938 },
+      { "contestId": 2106, "contestName": "Codeforces Round 1020 (Div. 3)", "ratingUpdateTimeSeconds": 1745513400, "newRating": 981 },
+      { "contestId": 2098, "contestName": "Codeforces Round 1021 (Div. 2)", "ratingUpdateTimeSeconds": 1745667300, "newRating": 986 },
+      { "contestId": 2104, "contestName": "Educational Codeforces Round 178", "ratingUpdateTimeSeconds": 1745858100, "newRating": 914 },
+      { "contestId": 2108, "contestName": "Codeforces Round 1022 (Div. 2)", "ratingUpdateTimeSeconds": 1746117300, "newRating": 1038 },
+      { "contestId": 2114, "contestName": "Codeforces Round 1027 (Div. 3)", "ratingUpdateTimeSeconds": 1748278200, "newRating": 1058 },
+      { "contestId": 2111, "contestName": "Educational Codeforces Round 179", "ratingUpdateTimeSeconds": 1748968500, "newRating": 1046 },
+      { "contestId": 2117, "contestName": "Codeforces Round 1029 (Div. 3)", "ratingUpdateTimeSeconds": 1749401400, "newRating": 1136 },
+      { "contestId": 2118, "contestName": "Codeforces Round 1030 (Div. 2)", "ratingUpdateTimeSeconds": 1749746100, "newRating": 1206 },
+      { "contestId": 2113, "contestName": "Codeforces Round 1031 (Div. 2)", "ratingUpdateTimeSeconds": 1749985500, "newRating": 1206 },
+      { "contestId": 2121, "contestName": "Codeforces Round 1032 (Div. 3)", "ratingUpdateTimeSeconds": 1750179000, "newRating": 1205 },
+      { "contestId": 2112, "contestName": "Educational Codeforces Round 180", "ratingUpdateTimeSeconds": 1750696500, "newRating": 1306 },
+      { "contestId": 2124, "contestName": "EPIC Institute of Technology Round Summer 2025", "ratingUpdateTimeSeconds": 1751823300, "newRating": 1296 },
+      { "contestId": 2240, "contestName": "Codeforces Round 1105 (Div. 2)", "ratingUpdateTimeSeconds": 1782579900, "newRating": 1434 }
+    ]
+  },
+  "codechef": {
+    "handle": "sarthak14313",
+    "profileUrl": "https://www.codechef.com/users/sarthak14313",
+    "stars": 3,
+    "rating": 1636,
+    "maxRating": 1636,
+    "contests": 37,
+    "note": "Static snapshot. CodeChef has no reliable public API for live rating."
+  },
+  "leetcode": {
+    "handle": "TODO_LEETCODE_HANDLE",
+    "profileUrl": "https://leetcode.com/TODO_LEETCODE_HANDLE/",
+    "solved": 500,
+    "target": 600,
+    "easy": null,
+    "medium": null,
+    "hard": null,
+    "note": "TODO: replace handle and add easy/medium/hard counts. Resume states 500+ solved; split is unknown so sectors stay empty."
+  }
+}
