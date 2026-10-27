@@ -1,4 +1,3 @@
-
 # Sarthak Parkale — Race Weekend portfolio
 
 Single-page internship portfolio (Vite + React + Tailwind CSS + Framer Motion). Theme is inspired by an F1 race-weekend livery (navy / racing red / sun yellow) — no team marks or driver photos.
@@ -65,6 +64,3 @@ User-site hosting (`https://<user>.github.io/`) can keep `VITE_BASE=/`.
 - `?` shortcut list
 
 The intro uses `sessionStorage` (`race-weekend-intro-seen`), plays once per tab, and is skipped when `prefers-reduced-motion` is set.
-=======
-# Portfolio
-
