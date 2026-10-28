@@ -78,75 +78,111 @@ export function RaceCalendar() {
 }
 
 function ProjectCard({ project, featured = false, open, onToggle }) {
+  const hasLive = Boolean(project.live && !String(project.live).includes('TODO'))
+  const hasRepo = Boolean(project.repo && !String(project.repo).includes('TODO'))
+
+  const validStack = (project.stack ?? []).filter(
+    (s) => s && !String(s).includes('TODO'),
+  )
+
+  const hasLang = Boolean(project.language && !String(project.language).includes('TODO'))
+  const hasStars = typeof project.stars === 'number' && project.stars > 0
+  const hasCommit = Boolean(project.lastCommit && !String(project.lastCommit).includes('TODO'))
+
+  const statCells = []
+  if (hasLang) statCells.push({ label: 'Lang', value: project.language })
+  if (hasStars) statCells.push({ label: 'Stars', value: project.stars })
+  if (hasCommit) statCells.push({ label: 'Commit', value: project.lastCommit })
+
   return (
-    <article className={`border border-white/10 bg-surface/80 ${featured ? 'p-5' : 'p-4'}`}>
-      <button type="button" onClick={onToggle} className="w-full text-left">
-        <div className="flex items-start justify-between gap-3">
-          <h3 className={`font-display font-extrabold italic ${featured ? 'text-2xl' : 'text-xl'}`}>
-            {project.name}
-          </h3>
-          {project.live ? (
-            <span className="shrink-0 border border-sun/70 px-2 py-0.5 font-mono text-[10px] tracking-widest text-sun uppercase">
-              Live Demo
-            </span>
-          ) : null}
-        </div>
-        <p className="mt-2 text-sm text-silver">{project.pitch}</p>
-      </button>
-      <ul className="mt-3 flex flex-wrap gap-1.5">
-        {project.stack.map((s) => (
-          <li key={s} className="border border-white/10 px-2 py-0.5 font-mono text-[10px] text-silver">
-            {s}
-          </li>
-        ))}
-      </ul>
-      <dl className="mt-4 grid grid-cols-3 border border-white/10 font-mono text-[10px] tracking-widest uppercase">
-        <div className="border-r border-white/10 p-2">
-          <dt className="text-silver">Lang</dt>
-          <dd className="text-white">{project.language}</dd>
-        </div>
-        <div className="border-r border-white/10 p-2">
-          <dt className="text-silver">Stars</dt>
-          <dd className="text-white">{project.stars}</dd>
-        </div>
-        <div className="p-2">
-          <dt className="text-silver">Commit</dt>
-          <dd className="text-white">{project.lastCommit}</dd>
-        </div>
-      </dl>
-      <div className="mt-4 flex flex-wrap gap-3">
-        <ExternalLink
-          href={project.repo}
-          className="border border-racing px-3 py-1.5 font-mono text-[11px] tracking-widest text-racing uppercase"
-        >
-          Repo
-        </ExternalLink>
-        {project.live ? (
-          <ExternalLink
-            href={project.live}
-            className="font-mono text-[11px] tracking-widest text-silver uppercase underline"
-          >
-            Open live
-          </ExternalLink>
+    <article className={`border border-white/10 bg-surface/80 flex flex-col justify-between ${featured ? 'p-5' : 'p-4'}`}>
+      <div>
+        <button type="button" onClick={onToggle} className="w-full text-left cursor-pointer">
+          <div className="flex items-start justify-between gap-3">
+            <h3 className={`font-display font-extrabold italic ${featured ? 'text-2xl' : 'text-xl'}`}>
+              {project.name}
+            </h3>
+            {hasLive ? (
+              <span className="shrink-0 border border-sun/70 px-2 py-0.5 font-mono text-[10px] tracking-widest text-sun uppercase">
+                Live Demo
+              </span>
+            ) : null}
+          </div>
+          <p className="mt-2 text-sm text-silver">{project.pitch}</p>
+        </button>
+
+        {validStack.length > 0 ? (
+          <ul className="mt-3 flex flex-wrap gap-1.5">
+            {validStack.map((s) => (
+              <li key={s} className="border border-white/10 px-2 py-0.5 font-mono text-[10px] text-silver">
+                {s}
+              </li>
+            ))}
+          </ul>
+        ) : null}
+
+        {statCells.length > 0 ? (
+          <dl className="mt-4 grid grid-flow-col auto-cols-fr divide-x divide-white/10 border border-white/10 font-mono text-[10px] tracking-widest uppercase">
+            {statCells.map((cell) => (
+              <div key={cell.label} className="p-2">
+                <dt className="text-silver">{cell.label}</dt>
+                <dd className="truncate text-white">{cell.value}</dd>
+              </div>
+            ))}
+          </dl>
+        ) : null}
+
+        {hasRepo || hasLive ? (
+          <div className="mt-4 flex flex-wrap gap-3">
+            {hasRepo ? (
+              <ExternalLink
+                href={project.repo}
+                className="border border-racing px-3 py-1.5 font-mono text-[11px] tracking-widest text-racing uppercase hover:bg-racing hover:text-white transition-colors"
+              >
+                Repo
+              </ExternalLink>
+            ) : null}
+            {hasLive ? (
+              <ExternalLink
+                href={project.live}
+                className="font-mono text-[11px] tracking-widest text-silver uppercase underline hover:text-white transition-colors"
+              >
+                Open live
+              </ExternalLink>
+            ) : null}
+          </div>
         ) : null}
       </div>
+
       {open ? (
         <div className="mt-4 space-y-2 border-t border-white/10 pt-4 text-sm text-silver">
-          <p>
-            <span className="font-mono text-[10px] tracking-widest text-racing uppercase">Problem · </span>
-            {project.problem}
-          </p>
-          <p>
-            <span className="font-mono text-[10px] tracking-widest text-racing uppercase">Role · </span>
-            {project.role}
-          </p>
-          <p>
-            <span className="font-mono text-[10px] tracking-widest text-racing uppercase">Outcome · </span>
-            {project.outcome}
-          </p>
+          {project.problem ? (
+            <p>
+              <span className="font-mono text-[10px] tracking-widest text-racing uppercase">Problem · </span>
+              {project.problem}
+            </p>
+          ) : null}
+          {project.role ? (
+            <p>
+              <span className="font-mono text-[10px] tracking-widest text-racing uppercase">Role · </span>
+              {project.role}
+            </p>
+          ) : null}
+          {project.outcome ? (
+            <p>
+              <span className="font-mono text-[10px] tracking-widest text-racing uppercase">Outcome · </span>
+              {project.outcome}
+            </p>
+          ) : null}
         </div>
       ) : (
-        <p className="mt-3 font-mono text-[10px] text-silver">Tap card for race notes</p>
+        <button
+          type="button"
+          onClick={onToggle}
+          className="mt-3 text-left font-mono text-[10px] text-silver hover:text-white transition-colors cursor-pointer"
+        >
+          Tap card for race notes
+        </button>
       )}
     </article>
   )

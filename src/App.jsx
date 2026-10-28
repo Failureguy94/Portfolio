@@ -5,6 +5,7 @@ import { Navbar } from './components/Navbar'
 import { ScrollProgress } from './components/ScrollProgress'
 import { ShortcutHelp } from './components/ShortcutHelp'
 import { Hero } from './sections/Hero'
+import { siteMeta } from './data/metadata'
 
 const Telemetry = lazy(() => import('./sections/Telemetry').then((m) => ({ default: m.Telemetry })))
 const RaceCalendar = lazy(() => import('./sections/RaceCalendar').then((m) => ({ default: m.RaceCalendar })))
@@ -25,6 +26,20 @@ export default function App() {
   const [help, setHelp] = useState(false)
 
   const finishIntro = useCallback(() => setIntroDone(true), [])
+
+  useEffect(() => {
+    document.title = siteMeta.title
+    const desc = document.querySelector('meta[name="description"]')
+    if (desc) desc.setAttribute('content', siteMeta.description)
+    const ogTitle = document.querySelector('meta[property="og:title"]')
+    if (ogTitle) ogTitle.setAttribute('content', siteMeta.ogTitle)
+    const ogDesc = document.querySelector('meta[property="og:description"]')
+    if (ogDesc) ogDesc.setAttribute('content', siteMeta.ogDescription)
+    const twTitle = document.querySelector('meta[name="twitter:title"]')
+    if (twTitle) twTitle.setAttribute('content', siteMeta.twitterTitle)
+    const twDesc = document.querySelector('meta[name="twitter:description"]')
+    if (twDesc) twDesc.setAttribute('content', siteMeta.twitterDescription)
+  }, [])
 
   useEffect(() => {
     function onKey(e) {

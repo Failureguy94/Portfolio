@@ -33,11 +33,11 @@ export function TeamRadio() {
         <SectionHeader
           kicker="Box this lap"
           title="Team Radio"
-          subtitle="Sarthak, box this lap — ping me if you want a builder who already has contest miles and shipped repos."
+          subtitle="Hiring for internships? I'm a builder with contest experience and shipped repos. Send a message and I'll reply fast."
         />
 
         <p className="mb-8 font-display text-xl italic text-silver sm:text-2xl">
-          “Box, box. Internships this season. Radio check — do you copy?”
+          “Box, box. Internships this season. Radio check, do you copy?”
         </p>
 
         <div className="grid gap-10 lg:grid-cols-2">
@@ -48,9 +48,6 @@ export function TeamRadio() {
               window.location.href = mailto
             }}
           >
-            <p className="font-mono text-[10px] tracking-widest text-silver uppercase">
-              Send Message uses mailto on your device. No backend — swap in Formspree later if you want.
-            </p>
             <label className="block">
               <span className="font-mono text-[10px] tracking-widest text-silver uppercase">Name</span>
               <input
@@ -82,7 +79,7 @@ export function TeamRadio() {
             </label>
             <button
               type="submit"
-              className="border border-silver/50 px-5 py-2.5 font-mono text-xs tracking-[0.18em] text-white uppercase hover:border-white"
+              className="bg-sun text-navy font-semibold px-6 py-2.5 font-mono text-xs tracking-[0.18em] uppercase transition-all duration-150 hover:bg-[#ffe066] hover:shadow-[0_0_15px_rgba(255,204,0,0.35)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sun active:scale-[0.98] cursor-pointer"
             >
               Send Message
             </button>
@@ -96,7 +93,7 @@ export function TeamRadio() {
               <button
                 type="button"
                 onClick={copyEmail}
-                className="inline-flex items-center gap-2 border border-white/15 px-3 py-1.5 font-mono text-[11px] text-silver uppercase"
+                className="inline-flex items-center gap-2 border border-white/15 px-3 py-1.5 font-mono text-[11px] text-silver uppercase hover:border-white hover:text-white transition-colors cursor-pointer"
               >
                 <Copy size={14} /> Copy
               </button>
@@ -104,20 +101,20 @@ export function TeamRadio() {
             <div className="flex flex-wrap gap-3">
               <ExternalLink
                 href={profile.linkedin.url}
-                className="inline-flex items-center gap-2 border border-white/15 px-3 py-2 font-mono text-xs text-silver uppercase"
+                className="inline-flex items-center gap-2 border border-white/15 px-3 py-2 font-mono text-xs text-silver uppercase hover:border-white hover:text-white transition-colors"
               >
                 <LinkedinIcon size={16} /> LinkedIn
               </ExternalLink>
               <ExternalLink
                 href={profile.github.url}
-                className="inline-flex items-center gap-2 border border-white/15 px-3 py-2 font-mono text-xs text-silver uppercase"
+                className="inline-flex items-center gap-2 border border-white/15 px-3 py-2 font-mono text-xs text-silver uppercase hover:border-white hover:text-white transition-colors"
               >
                 <GithubIcon size={16} /> GitHub
               </ExternalLink>
               <a
                 href={profile.resumePath}
                 download
-                className="inline-flex items-center border border-silver/40 px-3 py-2 font-mono text-xs text-silver uppercase"
+                className="inline-flex items-center border border-silver/40 px-3 py-2 font-mono text-xs text-silver uppercase hover:border-white hover:text-white transition-colors"
               >
                 Download Resume
               </a>

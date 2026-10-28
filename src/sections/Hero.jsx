@@ -1,4 +1,5 @@
 import { profile } from '../data/profile'
+import { siteMetrics } from '../data/metadata'
 import { ExternalLink } from '../components/ExternalLink'
 import { GithubIcon } from '../components/BrandIcons'
 
@@ -55,8 +56,8 @@ export function Hero() {
                   <span className="h-2 w-2 rounded-full bg-sun" aria-hidden="true" />
                   {profile.status.label}
                 </p>
-                <p className="mt-2 font-mono text-[10px] text-silver">{profile.batch}</p>
-                <p className="font-mono text-[10px] text-silver">CGPA {profile.cgpa}</p>
+                <p className="mt-2 font-mono text-[10px] text-silver">{siteMetrics.graduationYears}</p>
+                <p className="font-mono text-[10px] text-silver">CGPA {siteMetrics.cgpa}</p>
               </div>
             </div>
             <dl className="mt-6 grid grid-cols-2 gap-3 border-t border-white/10 pt-4 font-mono text-xs">
