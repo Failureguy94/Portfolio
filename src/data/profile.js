@@ -9,6 +9,7 @@ export const profile = {
   collegeShort: 'IIIT Nagpur',
   degree: 'B.Tech Computer Science Engineering',
   batch: '2024–2028',
+  graduationYears: '2024–2028',
   cgpa: 8.07,
   role: 'CSE student · GDG core',
   gdg: {

@@ -49,13 +49,13 @@
     "note": "Static snapshot. CodeChef has no reliable public API for live rating."
   },
   "leetcode": {
-    "handle": "TODO_LEETCODE_HANDLE",
-    "profileUrl": "https://leetcode.com/TODO_LEETCODE_HANDLE/",
+    "handle": "sarthak0703y",
+    "profileUrl": "https://leetcode.com/u/sarthak0703y/",
     "solved": 500,
     "target": 600,
     "easy": null,
     "medium": null,
     "hard": null,
-    "note": "TODO: replace handle and add easy/medium/hard counts. Resume states 500+ solved; split is unknown so sectors stay empty."
+    "note": "Solved count sourced from resume snapshot."
   }
 }

@@ -46,16 +46,17 @@ export const projects = [
     pitch:
       'Multi-vendor DVR/NVR forensic analysis tool for a Smart India Hackathon NTRO problem statement.',
     categories: ['Hackathon'],
-    stack: ['TODO_STACK'],
-    language: 'TODO',
+    stack: [],
+    language: '',
     stars: 0,
-    lastCommit: 'TODO',
-    repo: 'TODO_REPO_URL',
+    lastCommit: '',
+    repo: '',
     live: null,
     problem:
       'Forensic teams need a vendor-agnostic way to inspect DVR/NVR footage and metadata under an NTRO-style brief.',
-    role: 'TODO: add your role on this SIH team.',
-    outcome: 'TODO: add outcome. Public repo URL was not found on GitHub — fill repo in this file.',
+    role: 'SIH prototype: scene intake, multi-vendor video extraction, and metadata parsing under forensic guidelines.',
+    outcome:
+      'Smart India Hackathon prototype (NTRO problem statement). Vendor-agnostic parser for proprietary surveillance footage.',
   },
   {
     id: 'codekick',
