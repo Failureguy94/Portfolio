@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { motion } from 'framer-motion'
 import { Activity, Flag, Radio, Wrench, CircleQuestionMark } from 'lucide-react'
 import { navLinks, profile } from '../data/profile'
 import { useActiveSection } from '../hooks/useActiveSection'
@@ -8,6 +9,14 @@ const icons = {
   races: Flag,
   'pit-wall': Wrench,
   radio: Radio,
+}
+
+const sectorLabels = {
+  hero: 'GRID',
+  telemetry: 'S1',
+  races: 'S2',
+  'pit-wall': 'S3',
+  radio: 'RADIO',
 }
 
 export function Navbar({ onHelp }) {
@@ -29,13 +38,18 @@ export function Navbar({ onHelp }) {
       </a>
 
       <header className="fixed top-0 right-0 left-0 z-40 flex h-12 items-center justify-between border-b border-white/10 bg-navy/90 px-4 backdrop-blur-md md:hidden">
-        <a
-          href="#hero"
-          onClick={goTop}
-          className="font-display text-xs font-extrabold tracking-[0.2em] text-white italic"
-        >
-          {profile.shortName.toUpperCase()}
-        </a>
+        <div className="flex items-center gap-2">
+          <a
+            href="#hero"
+            onClick={goTop}
+            className="font-display text-xs font-extrabold tracking-[0.2em] text-white italic"
+          >
+            {profile.shortName.toUpperCase()}
+          </a>
+          <span className="border border-racing/60 bg-racing/10 px-1.5 py-0.5 font-mono text-[9px] font-semibold tracking-widest text-racing uppercase">
+            {sectorLabels[active] || 'GRID'}
+          </span>
+        </div>
         <div className="flex items-center gap-3">
           <StatusLight compact onToggle={() => setOpen((v) => !v)} open={open} />
           <button type="button" onClick={onHelp} className="text-silver" aria-label="Keyboard shortcuts">
@@ -46,25 +60,40 @@ export function Navbar({ onHelp }) {
 
       <header className="fixed top-0 right-0 left-0 z-40 hidden border-b border-white/10 bg-navy/90 backdrop-blur-md md:block">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-6">
-          <a
-            href="#hero"
-            onClick={goTop}
-            className="font-display text-sm font-extrabold tracking-[0.2em] text-white italic"
-          >
-            {profile.shortName.toUpperCase()}
-          </a>
+          <div className="flex items-center gap-3">
+            <a
+              href="#hero"
+              onClick={goTop}
+              className="font-display text-sm font-extrabold tracking-[0.2em] text-white italic"
+            >
+              {profile.shortName.toUpperCase()}
+            </a>
+            <span className="border border-racing/60 bg-racing/10 px-2 py-0.5 font-mono text-[10px] font-semibold tracking-widest text-racing uppercase">
+              {sectorLabels[active] || 'GRID'}
+            </span>
+          </div>
           <nav aria-label="Primary" className="flex items-center gap-6">
-            {navLinks.map((link) => (
-              <a
-                key={link.id}
-                href={`#${link.id}`}
-                className={`font-mono text-[11px] tracking-[0.22em] uppercase ${
-                  active === link.id ? 'text-racing' : 'text-silver hover:text-white'
-                }`}
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = active === link.id
+              return (
+                <a
+                  key={link.id}
+                  href={`#${link.id}`}
+                  className={`relative py-1 font-mono text-[11px] tracking-[0.22em] uppercase transition-colors ${
+                    isActive ? 'text-white' : 'text-silver hover:text-white'
+                  }`}
+                >
+                  {link.label}
+                  {isActive ? (
+                    <motion.span
+                      layoutId="nav-underline"
+                      className="absolute right-0 bottom-0 left-0 h-[2px] bg-racing"
+                      transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                    />
+                  ) : null}
+                </a>
+              )
+            })}
           </nav>
           <div className="flex items-center gap-3">
             <StatusLight onToggle={() => setOpen((v) => !v)} open={open} />
