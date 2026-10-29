@@ -4,7 +4,7 @@ export const skillGroups = [
     items: [
       { name: 'C++', usedIn: ['Competitive programming contests', 'CSES Sheets'] },
       { name: 'C', usedIn: ['Coursework'] },
-      { name: 'Python', usedIn: ['SlickSherlock'] },
+      { name: 'Python', usedIn: ['SlickSherlock', 'DVR/NVR Forensic Analysis Tool'] },
       { name: 'JavaScript', usedIn: ['Codekick', 'Veri Bounty'] },
       { name: 'TypeScript', usedIn: ['Veri Bounty', 'Codekick', 'SlickSherlock'] },
       { name: 'Rust', usedIn: ['Veri Bounty (Anchor)'] },
@@ -39,7 +39,7 @@ export const skillGroups = [
       { name: 'Linux', usedIn: ['Daily driver'] },
       { name: 'MongoDB', usedIn: ['Veri Bounty'] },
       { name: 'PostgreSQL / Supabase', usedIn: ['Codekick'] },
-      { name: 'FastAPI', usedIn: ['SlickSherlock'] },
+      { name: 'FastAPI', usedIn: ['SlickSherlock', 'DVR/NVR Forensic Analysis Tool'] },
     ],
   },
 ]

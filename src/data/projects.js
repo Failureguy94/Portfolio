@@ -44,19 +44,19 @@ export const projects = [
     name: 'DVR/NVR Forensic Analysis Tool',
     featured: true,
     pitch:
-      'Multi-vendor DVR/NVR forensic analysis tool for a Smart India Hackathon NTRO problem statement.',
+      'Vendor-agnostic video intake, timestamp verification, and metadata carving for CCTV surveillance footage.',
     categories: ['Hackathon'],
-    stack: [],
-    language: '',
+    stack: ['Python', 'OpenCV', 'FFmpeg', 'FastAPI', 'PyQt'],
+    language: 'Python',
     stars: 0,
-    lastCommit: '',
+    lastCommit: '2026-09-18',
     repo: '',
     live: null,
     problem:
-      'Forensic teams need a vendor-agnostic way to inspect DVR/NVR footage and metadata under an NTRO-style brief.',
-    role: 'SIH prototype: scene intake, multi-vendor video extraction, and metadata parsing under forensic guidelines.',
+      'Forensic teams need a vendor-agnostic way to inspect DVR/NVR footage, parse proprietary codecs, and verify timestamps under an NTRO-style brief.',
+    role: 'SIH prototype: built container demuxing, video stream repair, frame integrity hashing, and timestamp carving.',
     outcome:
-      'Smart India Hackathon prototype (NTRO problem statement). Vendor-agnostic parser for proprietary surveillance footage.',
+      'Smart India Hackathon prototype for NTRO brief. Streamlines multi-vendor CCTV inspection with verifiable chain-of-custody data.',
   },
   {
     id: 'codekick',
