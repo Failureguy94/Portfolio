@@ -77,8 +77,9 @@ export function useCodeChef() {
           stars: json.stars || fallback.codechef.stars,
           rating: json.rating || fallback.codechef.rating,
           maxRating: json.maxRating || fallback.codechef.maxRating,
-          contests: fallback.codechef.contests || 37,
-          note: `Live profile synced · ${json.stars}-star rating`,
+          contests: json.contests || fallback.codechef.contests || 37,
+          totalSolved: json.totalSolved || null,
+          note: `Live profile synced · ${json.stars}-star rating${json.totalSolved ? ` · ${json.totalSolved} solved` : ''}`,
         }
 
         const nextState = {

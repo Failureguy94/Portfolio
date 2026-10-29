@@ -178,7 +178,7 @@ function LapTooltip({ active, payload }) {
 
 function CodeChefPanel({ cc }) {
   const data = cc?.data || cp.codechef
-  const { stars, rating, maxRating, handle } = data
+  const { stars, rating, maxRating, handle, contests, totalSolved } = data
   const pct = Math.min(100, (stars / 7) * 100)
 
   return (
@@ -187,7 +187,9 @@ function CodeChefPanel({ cc }) {
       <div>
         <p className="font-mono text-[10px] tracking-widest text-silver uppercase">{handle} · {stars}-star</p>
         <p className="font-display text-3xl italic">{rating}</p>
-        <p className="font-mono text-xs text-silver">Peak {maxRating} · gauge is star class / 7</p>
+        <p className="font-mono text-xs text-silver">
+          Peak {maxRating} · {contests ?? 37} contests{totalSolved ? ` · ${totalSolved} solved` : ''} · gauge is star class / 7
+        </p>
         <div className="mt-4 h-2 w-full max-w-sm overflow-hidden bg-white/10">
           <div className="h-full bg-racing" style={{ width: `${pct}%` }} />
         </div>
