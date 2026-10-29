@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { Activity, Flag, Radio, Wrench, CircleQuestionMark } from 'lucide-react'
 import { navLinks, profile } from '../data/profile'
 import { useActiveSection } from '../hooks/useActiveSection'
+import { Magnetic } from './Magnetic'
 
 const icons = {
   telemetry: Activity,
@@ -97,13 +98,15 @@ export function Navbar({ onHelp }) {
           </nav>
           <div className="flex items-center gap-3">
             <StatusLight onToggle={() => setOpen((v) => !v)} open={open} />
-            <a
-              href={profile.resumePath}
-              download
-              className="bg-sun px-3 py-1.5 font-mono text-[11px] font-semibold tracking-[0.16em] text-surface uppercase"
-            >
-              Resume
-            </a>
+            <Magnetic>
+              <a
+                href={profile.resumePath}
+                download
+                className="btn-primary-yellow inline-block px-3 py-1.5 font-mono text-[11px] font-semibold tracking-[0.16em] uppercase"
+              >
+                Resume
+              </a>
+            </Magnetic>
             <button
               type="button"
               onClick={onHelp}
@@ -139,7 +142,7 @@ export function Navbar({ onHelp }) {
         <a
           href={profile.resumePath}
           download
-          className="flex flex-col items-center justify-center bg-sun font-mono text-[10px] font-semibold text-surface uppercase"
+          className="btn-primary-yellow flex flex-col items-center justify-center font-mono text-[10px] font-semibold uppercase"
         >
           Resume
         </a>
@@ -158,9 +161,8 @@ function StatusLight({ open, onToggle, compact = false }) {
         aria-expanded={open}
         aria-haspopup="dialog"
       >
-        <span className="relative flex h-2.5 w-2.5">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sun opacity-60" />
-          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-sun" />
+        <span className="relative flex h-2.5 w-2.5 items-center justify-center">
+          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-sun status-pulse-glow" />
         </span>
         {compact ? 'Open' : profile.status.label}
       </button>

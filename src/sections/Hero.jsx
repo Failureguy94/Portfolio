@@ -53,7 +53,7 @@ export function Hero() {
               </div>
               <div className="text-right">
                 <p className="inline-flex items-center gap-2 font-mono text-[10px] tracking-widest text-sun uppercase">
-                  <span className="h-2 w-2 rounded-full bg-sun" aria-hidden="true" />
+                  <span className="h-2 w-2 rounded-full bg-sun status-pulse-glow" aria-hidden="true" />
                   {profile.status.label}
                 </p>
                 <p className="mt-2 font-mono text-[10px] text-silver">{siteMetrics.graduationYears}</p>

@@ -1,14 +1,16 @@
 import { useState } from 'react'
-import { Copy } from 'lucide-react'
+import { Check, Copy } from 'lucide-react'
 import { GithubIcon, LinkedinIcon } from '../components/BrandIcons'
 import { profile } from '../data/profile'
 import { SectionHeader } from '../components/SectionHeader'
 import { ExternalLink } from '../components/ExternalLink'
 import { Toast } from '../components/Toast'
 import { FadeUp } from '../components/MotionReveal'
+import { Magnetic } from '../components/Magnetic'
 
 export function TeamRadio() {
   const [toast, setToast] = useState('')
+  const [copied, setCopied] = useState(false)
   const [name, setName] = useState('')
   const [from, setFrom] = useState('')
   const [body, setBody] = useState('')
@@ -16,11 +18,15 @@ export function TeamRadio() {
   async function copyEmail() {
     try {
       await navigator.clipboard.writeText(profile.email)
+      setCopied(true)
       setToast('Copied')
-      setTimeout(() => setToast(''), 1600)
+      setTimeout(() => {
+        setCopied(false)
+        setToast('')
+      }, 1500)
     } catch {
       setToast('Copy failed')
-      setTimeout(() => setToast(''), 1600)
+      setTimeout(() => setToast(''), 1500)
     }
   }
 
@@ -80,12 +86,14 @@ export function TeamRadio() {
                 required
               />
             </label>
-            <button
-              type="submit"
-              className="bg-sun text-navy font-semibold px-6 py-2.5 font-mono text-xs tracking-[0.18em] uppercase transition-all duration-150 hover:bg-[#ffe066] hover:shadow-[0_0_15px_rgba(255,204,0,0.35)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sun active:scale-[0.98] cursor-pointer"
-            >
-              Send Message
-            </button>
+            <Magnetic>
+              <button
+                type="submit"
+                className="btn-primary-yellow font-semibold px-6 py-2.5 font-mono text-xs tracking-[0.18em] uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sun cursor-pointer"
+              >
+                Send Message
+              </button>
+            </Magnetic>
           </form>
 
           <div className="space-y-4">
@@ -98,7 +106,15 @@ export function TeamRadio() {
                 onClick={copyEmail}
                 className="inline-flex items-center gap-2 border border-white/15 px-3 py-1.5 font-mono text-[11px] text-silver uppercase hover:border-white hover:text-white transition-colors cursor-pointer"
               >
-                <Copy size={14} /> Copy
+                {copied ? (
+                  <>
+                    <Check size={14} className="text-sector-green" /> Copied
+                  </>
+                ) : (
+                  <>
+                    <Copy size={14} /> Copy
+                  </>
+                )}
               </button>
             </div>
             <div className="flex flex-wrap gap-3">
@@ -114,13 +130,15 @@ export function TeamRadio() {
               >
                 <GithubIcon size={16} /> GitHub
               </ExternalLink>
-              <a
-                href={profile.resumePath}
-                download
-                className="inline-flex items-center border border-silver/40 px-3 py-2 font-mono text-xs text-silver uppercase hover:border-white hover:text-white transition-colors"
-              >
-                Download Resume
-              </a>
+              <Magnetic>
+                <a
+                  href={profile.resumePath}
+                  download
+                  className="inline-flex items-center border border-silver/40 px-3 py-2 font-mono text-xs text-silver uppercase hover:border-white hover:text-white transition-colors"
+                >
+                  Download Resume
+                </a>
+              </Magnetic>
             </div>
           </div>
         </FadeUp>

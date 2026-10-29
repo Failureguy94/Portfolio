@@ -151,4 +151,49 @@ body {
   }
 }
 
+.btn-primary-yellow {
+  background-color: var(--color-sun);
+  color: var(--color-navy);
+  transition: transform 150ms ease, box-shadow 150ms ease;
+  will-change: transform, box-shadow;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary-yellow:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 #dc0a2d;
+  }
+  .btn-primary-yellow:active {
+    transform: translate(0, 0);
+    box-shadow: 0 0 0 #dc0a2d;
+  }
+}
+
+@keyframes status-glow {
+  0%, 100% {
+    box-shadow: 0 0 4px #ffcc00, 0 0 8px rgba(255, 204, 0, 0.4);
+    opacity: 1;
+  }
+  50% {
+    box-shadow: 0 0 12px #ffcc00, 0 0 20px rgba(255, 204, 0, 0.7);
+    opacity: 0.85;
+  }
+}
+
+.status-pulse-glow {
+  animation: status-glow 2s infinite ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary-yellow:hover,
+  .btn-primary-yellow:active {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  .status-pulse-glow {
+    animation: none !important;
+  }
+}
+
+
 
