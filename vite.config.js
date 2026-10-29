@@ -2,6 +2,8 @@ import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import { siteMeta } from './src/data/metadata.js'
+import leetcodeHandler from './api/leetcode.js'
+import codechefHandler from './api/codechef.js'
 
 function htmlMetaPlugin() {
   return {
@@ -18,7 +20,67 @@ function htmlMetaPlugin() {
   }
 }
 
+function telemetryApiPlugin() {
+  return {
+    name: 'telemetry-api-plugin',
+    configureServer(server) {
+      server.middlewares.use(async (req, res, next) => {
+        try {
+          const url = new URL(req.url, 'http://localhost')
+          if (url.pathname === '/api/leetcode') {
+            const reqShim = {
+              query: Object.fromEntries(url.searchParams.entries()),
+              headers: req.headers,
+              method: req.method,
+            }
+            const resShim = {
+              setHeader: (k, v) => res.setHeader(k, v),
+              status: (code) => {
+                res.statusCode = code
+                return {
+                  json: (data) => {
+                    res.setHeader('Content-Type', 'application/json')
+                    res.end(JSON.stringify(data))
+                  },
+                  end: () => res.end(),
+                }
+              },
+            }
+            await leetcodeHandler(reqShim, resShim)
+            return
+          }
+          if (url.pathname === '/api/codechef') {
+            const reqShim = {
+              query: Object.fromEntries(url.searchParams.entries()),
+              headers: req.headers,
+              method: req.method,
+            }
+            const resShim = {
+              setHeader: (k, v) => res.setHeader(k, v),
+              status: (code) => {
+                res.statusCode = code
+                return {
+                  json: (data) => {
+                    res.setHeader('Content-Type', 'application/json')
+                    res.end(JSON.stringify(data))
+                  },
+                  end: () => res.end(),
+                }
+              },
+            }
+            await codechefHandler(reqShim, resShim)
+            return
+          }
+        } catch {
+          // pass to next middleware on error
+        }
+        next()
+      })
+    },
+  }
+}
+
 export default defineConfig({
-  plugins: [react(), tailwindcss(), htmlMetaPlugin()],
+  plugins: [react(), tailwindcss(), htmlMetaPlugin(), telemetryApiPlugin()],
   base: process.env.VITE_BASE ?? '/',
 })

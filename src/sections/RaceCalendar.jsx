@@ -1,15 +1,17 @@
 import { useMemo, useState } from 'react'
-import { projectFilters, projects } from '../data/projects'
+import { projectFilters } from '../data/projects'
 import { SectionHeader } from '../components/SectionHeader'
 import { ExternalLink } from '../components/ExternalLink'
+import { useGitHubProjects } from '../hooks/useGitHubProjects'
 
 export function RaceCalendar() {
   const [filter, setFilter] = useState('All')
   const [openId, setOpenId] = useState(null)
+  const { projects, status: ghStatus, authenticated, lastSynced } = useGitHubProjects()
 
   const visible = useMemo(
     () => (filter === 'All' ? projects : projects.filter((p) => p.categories.includes(filter))),
-    [filter],
+    [filter, projects],
   )
   const featured = visible.filter((p) => p.featured)
   const archive = visible.filter((p) => !p.featured)
@@ -72,6 +74,19 @@ export function RaceCalendar() {
         ) : null}
 
         {!visible.length ? <p className="font-mono text-sm text-silver">No races in this class.</p> : null}
+
+        <p className="mt-8 font-mono text-[10px] tracking-widest text-silver uppercase">
+          {ghStatus === 'ok' ? (
+            <span className="inline-flex items-center gap-1.5 text-sector-green">
+              <span className="h-1.5 w-1.5 rounded-full bg-sector-green" />
+              GitHub telemetry live {authenticated ? '(authenticated)' : ''} {lastSynced ? `· ${lastSynced}` : ''}
+            </span>
+          ) : ghStatus === 'loading' ? (
+            'Fetching GitHub telemetry…'
+          ) : (
+            'GitHub telemetry · static fallback'
+          )}
+        </p>
       </div>
     </section>
   )
