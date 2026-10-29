@@ -4,6 +4,7 @@ import { LightsOutIntro } from './components/LightsOutIntro'
 import { Navbar } from './components/Navbar'
 import { ScrollProgress } from './components/ScrollProgress'
 import { ShortcutHelp } from './components/ShortcutHelp'
+import { BackToTop } from './components/BackToTop'
 import { Hero } from './sections/Hero'
 import { siteMeta } from './data/metadata'
 
@@ -82,6 +83,7 @@ export default function App() {
         </Suspense>
       </main>
       <ShortcutHelp open={help} onClose={() => setHelp(false)} />
+      <BackToTop />
       {introDone ? null : <div className="sr-only" aria-live="polite">Lights-out sequence playing</div>}
     </div>
   )
