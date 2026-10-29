@@ -106,3 +106,49 @@ body {
   animation: shimmer 1.5s infinite;
 }
 
+.project-card {
+  position: relative;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+  will-change: transform;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .project-card:hover {
+    border-color: #dc0a2d;
+  }
+}
+
+.project-card::before,
+.project-card::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 150ms ease;
+  z-index: 10;
+}
+
+.project-card::before {
+  top: -1px;
+  left: -1px;
+  border-top: 2px solid #dc0a2d;
+  border-left: 2px solid #dc0a2d;
+}
+
+.project-card::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 2px solid #dc0a2d;
+  border-right: 2px solid #dc0a2d;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .project-card:hover::before,
+  .project-card:hover::after {
+    opacity: 0.9;
+  }
+}
+
+

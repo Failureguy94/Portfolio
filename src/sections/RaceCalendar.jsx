@@ -1,13 +1,15 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { projectFilters } from '../data/projects'
 import { SectionHeader } from '../components/SectionHeader'
 import { ExternalLink } from '../components/ExternalLink'
 import { useGitHubProjects } from '../hooks/useGitHubProjects'
-import { FadeUp, StaggerContainer, StaggerItem } from '../components/MotionReveal'
+import { FadeUp } from '../components/MotionReveal'
 
 export function RaceCalendar() {
   const [filter, setFilter] = useState('All')
   const [openId, setOpenId] = useState(null)
+  const shouldReduce = useReducedMotion()
   const { projects, status: ghStatus, authenticated, lastSynced } = useGitHubProjects()
 
   const visible = useMemo(
@@ -34,11 +36,18 @@ export function RaceCalendar() {
               key={f}
               type="button"
               onClick={() => setFilter(f)}
-              className={`px-3 py-1.5 font-mono text-[11px] tracking-[0.16em] uppercase transition-colors cursor-pointer ${
-                filter === f ? 'bg-racing text-white' : 'border border-white/15 text-silver hover:border-white/40'
+              className={`relative px-3 py-1.5 font-mono text-[11px] tracking-[0.16em] uppercase transition-colors cursor-pointer ${
+                filter === f ? 'text-white' : 'border border-white/15 text-silver hover:border-white/40'
               }`}
             >
-              {f}
+              {filter === f && (
+                <motion.span
+                  layoutId="project-filter-pill"
+                  className="absolute inset-0 bg-racing"
+                  transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                />
+              )}
+              <span className="relative z-10">{f}</span>
             </button>
           ))}
         </FadeUp>
@@ -46,35 +55,55 @@ export function RaceCalendar() {
         {featured.length ? (
           <div>
             <p className="mb-4 font-mono text-[10px] tracking-[0.28em] text-sun uppercase">Pole Position</p>
-            <StaggerContainer className="grid gap-5 lg:grid-cols-3" stagger={0.08}>
-              {featured.map((p) => (
-                <StaggerItem key={p.id}>
-                  <ProjectCard
-                    project={p}
-                    featured
-                    open={openId === p.id}
-                    onToggle={() => setOpenId(openId === p.id ? null : p.id)}
-                  />
-                </StaggerItem>
-              ))}
-            </StaggerContainer>
+            <div className="grid gap-5 lg:grid-cols-3">
+              <AnimatePresence mode="popLayout">
+                {featured.map((p) => (
+                  <motion.div
+                    key={p.id}
+                    layout={!shouldReduce}
+                    initial={shouldReduce ? false : { opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={shouldReduce ? false : { opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.22 }}
+                  >
+                    <ProjectCard
+                      project={p}
+                      featured
+                      open={openId === p.id}
+                      onToggle={() => setOpenId(openId === p.id ? null : p.id)}
+                      shouldReduce={shouldReduce}
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
           </div>
         ) : null}
 
         {archive.length ? (
           <div className="mt-12">
             <p className="mb-4 font-mono text-[10px] tracking-[0.28em] text-silver uppercase">Season Archive</p>
-            <StaggerContainer className="grid gap-4 sm:grid-cols-2" stagger={0.06}>
-              {archive.map((p) => (
-                <StaggerItem key={p.id}>
-                  <ProjectCard
-                    project={p}
-                    open={openId === p.id}
-                    onToggle={() => setOpenId(openId === p.id ? null : p.id)}
-                  />
-                </StaggerItem>
-              ))}
-            </StaggerContainer>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <AnimatePresence mode="popLayout">
+                {archive.map((p) => (
+                  <motion.div
+                    key={p.id}
+                    layout={!shouldReduce}
+                    initial={shouldReduce ? false : { opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={shouldReduce ? false : { opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.22 }}
+                  >
+                    <ProjectCard
+                      project={p}
+                      open={openId === p.id}
+                      onToggle={() => setOpenId(openId === p.id ? null : p.id)}
+                      shouldReduce={shouldReduce}
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
           </div>
         ) : null}
 
@@ -97,7 +126,58 @@ export function RaceCalendar() {
   )
 }
 
-function ProjectCard({ project, featured = false, open, onToggle }) {
+function useCardTilt(shouldReduce) {
+  const [tiltStyle, setTiltStyle] = useState({})
+  const isDesktop = typeof window !== 'undefined' && window.matchMedia('(hover: hover) and (pointer: fine)').matches
+
+  const onMouseMove = useCallback(
+    (e) => {
+      if (shouldReduce || !isDesktop) return
+      const rect = e.currentTarget.getBoundingClientRect()
+      const x = (e.clientX - rect.left) / rect.width - 0.5
+      const y = (e.clientY - rect.top) / rect.height - 0.5
+      const rotX = Math.max(-4, Math.min(4, -y * 8))
+      const rotY = Math.max(-4, Math.min(4, x * 8))
+      setTiltStyle({
+        transform: `perspective(1000px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) translateY(-4px)`,
+        transition: 'transform 80ms ease-out',
+      })
+    },
+    [shouldReduce, isDesktop],
+  )
+
+  const onMouseLeave = useCallback(() => {
+    if (shouldReduce || !isDesktop) return
+    setTiltStyle({
+      transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)',
+      transition: 'transform 200ms ease-out',
+    })
+  }, [shouldReduce, isDesktop])
+
+  return { tiltStyle, onMouseMove, onMouseLeave }
+}
+
+function ProjectCard({ project, featured = false, open, onToggle, shouldReduce }) {
+  const detailRef = useRef(null)
+  const { tiltStyle, onMouseMove, onMouseLeave } = useCardTilt(shouldReduce)
+
+  useEffect(() => {
+    if (open) {
+      detailRef.current?.focus()
+    }
+  }, [open])
+
+  useEffect(() => {
+    if (!open) return
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onToggle()
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [open, onToggle])
+
   const hasLive = Boolean(project.live && !String(project.live).includes('TODO'))
   const hasRepo = Boolean(project.repo && !String(project.repo).includes('TODO'))
 
@@ -115,7 +195,14 @@ function ProjectCard({ project, featured = false, open, onToggle }) {
   if (hasCommit) statCells.push({ label: 'Commit', value: project.lastCommit })
 
   return (
-    <article className={`border border-white/10 bg-surface/80 flex flex-col justify-between ${featured ? 'p-5' : 'p-4'}`}>
+    <article
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+      style={tiltStyle}
+      className={`project-card border border-white/10 bg-surface/80 flex flex-col justify-between ${
+        featured ? 'p-5' : 'p-4'
+      }`}
+    >
       <div>
         <button type="button" onClick={onToggle} className="w-full text-left cursor-pointer">
           <div className="flex items-start justify-between gap-3">
@@ -174,36 +261,48 @@ function ProjectCard({ project, featured = false, open, onToggle }) {
         ) : null}
       </div>
 
-      {open ? (
-        <div className="mt-4 space-y-2 border-t border-white/10 pt-4 text-sm text-silver">
-          {project.problem ? (
-            <p>
-              <span className="font-mono text-[10px] tracking-widest text-racing uppercase">Problem · </span>
-              {project.problem}
-            </p>
-          ) : null}
-          {project.role ? (
-            <p>
-              <span className="font-mono text-[10px] tracking-widest text-racing uppercase">Role · </span>
-              {project.role}
-            </p>
-          ) : null}
-          {project.outcome ? (
-            <p>
-              <span className="font-mono text-[10px] tracking-widest text-racing uppercase">Outcome · </span>
-              {project.outcome}
-            </p>
-          ) : null}
-        </div>
-      ) : (
-        <button
-          type="button"
-          onClick={onToggle}
-          className="mt-3 text-left font-mono text-[10px] text-silver hover:text-white transition-colors cursor-pointer"
-        >
-          Tap card for race notes
-        </button>
-      )}
+      <AnimatePresence initial={false}>
+        {open ? (
+          <motion.div
+            ref={detailRef}
+            tabIndex={-1}
+            role="region"
+            aria-label={`${project.name} details`}
+            initial={shouldReduce ? { opacity: 1 } : { opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={shouldReduce ? { opacity: 0 } : { opacity: 0, height: 0 }}
+            transition={{ duration: 0.22, ease: 'easeInOut' }}
+            className="mt-4 space-y-2 border-t border-white/10 pt-4 text-sm text-silver overflow-hidden focus:outline-none"
+          >
+            {project.problem ? (
+              <p>
+                <span className="font-mono text-[10px] tracking-widest text-racing uppercase">Problem · </span>
+                {project.problem}
+              </p>
+            ) : null}
+            {project.role ? (
+              <p>
+                <span className="font-mono text-[10px] tracking-widest text-racing uppercase">Role · </span>
+                {project.role}
+              </p>
+            ) : null}
+            {project.outcome ? (
+              <p>
+                <span className="font-mono text-[10px] tracking-widest text-racing uppercase">Outcome · </span>
+                {project.outcome}
+              </p>
+            ) : null}
+          </motion.div>
+        ) : (
+          <button
+            type="button"
+            onClick={onToggle}
+            className="mt-3 text-left font-mono text-[10px] text-silver hover:text-white transition-colors cursor-pointer"
+          >
+            Tap card for race notes
+          </button>
+        )}
+      </AnimatePresence>
     </article>
   )
 }
