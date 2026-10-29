@@ -3,6 +3,7 @@ import { projectFilters } from '../data/projects'
 import { SectionHeader } from '../components/SectionHeader'
 import { ExternalLink } from '../components/ExternalLink'
 import { useGitHubProjects } from '../hooks/useGitHubProjects'
+import { FadeUp, StaggerContainer, StaggerItem } from '../components/MotionReveal'
 
 export function RaceCalendar() {
   const [filter, setFilter] = useState('All')
@@ -19,57 +20,61 @@ export function RaceCalendar() {
   return (
     <section id="races" className="px-4 py-16 sm:px-6 md:py-24">
       <div className="mx-auto max-w-6xl">
-        <SectionHeader
-          kicker="Sector 2 · Spec sheets"
-          title="Race Calendar"
-          subtitle="Pole-position builds first. Filter without a reload — the rest of the season sits in the archive."
-        />
+        <FadeUp>
+          <SectionHeader
+            kicker="Sector 2 · Spec sheets"
+            title="Race Calendar"
+            subtitle="Pole-position builds first. Filter without a reload — the rest of the season sits in the archive."
+          />
+        </FadeUp>
 
-        <div className="mb-8 flex flex-wrap gap-2" role="group" aria-label="Project filters">
+        <FadeUp delay={0.06} className="mb-8 flex flex-wrap gap-2" role="group" aria-label="Project filters">
           {projectFilters.map((f) => (
             <button
               key={f}
               type="button"
               onClick={() => setFilter(f)}
-              className={`px-3 py-1.5 font-mono text-[11px] tracking-[0.16em] uppercase ${
-                filter === f ? 'bg-racing text-white' : 'border border-white/15 text-silver'
+              className={`px-3 py-1.5 font-mono text-[11px] tracking-[0.16em] uppercase transition-colors cursor-pointer ${
+                filter === f ? 'bg-racing text-white' : 'border border-white/15 text-silver hover:border-white/40'
               }`}
             >
               {f}
             </button>
           ))}
-        </div>
+        </FadeUp>
 
         {featured.length ? (
           <div>
             <p className="mb-4 font-mono text-[10px] tracking-[0.28em] text-sun uppercase">Pole Position</p>
-            <div className="grid gap-5 lg:grid-cols-3">
+            <StaggerContainer className="grid gap-5 lg:grid-cols-3" stagger={0.08}>
               {featured.map((p) => (
-                <ProjectCard
-                  key={p.id}
-                  project={p}
-                  featured
-                  open={openId === p.id}
-                  onToggle={() => setOpenId(openId === p.id ? null : p.id)}
-                />
+                <StaggerItem key={p.id}>
+                  <ProjectCard
+                    project={p}
+                    featured
+                    open={openId === p.id}
+                    onToggle={() => setOpenId(openId === p.id ? null : p.id)}
+                  />
+                </StaggerItem>
               ))}
-            </div>
+            </StaggerContainer>
           </div>
         ) : null}
 
         {archive.length ? (
           <div className="mt-12">
             <p className="mb-4 font-mono text-[10px] tracking-[0.28em] text-silver uppercase">Season Archive</p>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <StaggerContainer className="grid gap-4 sm:grid-cols-2" stagger={0.06}>
               {archive.map((p) => (
-                <ProjectCard
-                  key={p.id}
-                  project={p}
-                  open={openId === p.id}
-                  onToggle={() => setOpenId(openId === p.id ? null : p.id)}
-                />
+                <StaggerItem key={p.id}>
+                  <ProjectCard
+                    project={p}
+                    open={openId === p.id}
+                    onToggle={() => setOpenId(openId === p.id ? null : p.id)}
+                  />
+                </StaggerItem>
               ))}
-            </div>
+            </StaggerContainer>
           </div>
         ) : null}
 

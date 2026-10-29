@@ -5,6 +5,7 @@ import { profile } from '../data/profile'
 import { SectionHeader } from '../components/SectionHeader'
 import { ExternalLink } from '../components/ExternalLink'
 import { Toast } from '../components/Toast'
+import { FadeUp } from '../components/MotionReveal'
 
 export function TeamRadio() {
   const [toast, setToast] = useState('')
@@ -30,17 +31,19 @@ export function TeamRadio() {
   return (
     <section id="radio" className="px-4 py-16 pb-28 sm:px-6 md:py-24 md:pb-24">
       <div className="mx-auto max-w-6xl">
-        <SectionHeader
-          kicker="Box this lap"
-          title="Team Radio"
-          subtitle="Hiring for internships? I'm a builder with contest experience and shipped repos. Send a message and I'll reply fast."
-        />
+        <FadeUp>
+          <SectionHeader
+            kicker="Box this lap"
+            title="Team Radio"
+            subtitle="Hiring for internships? I'm a builder with contest experience and shipped repos. Send a message and I'll reply fast."
+          />
 
-        <p className="mb-8 font-display text-xl italic text-silver sm:text-2xl">
-          “Box, box. Internships this season. Radio check, do you copy?”
-        </p>
+          <p className="mb-8 font-display text-xl italic text-silver sm:text-2xl">
+            “Box, box. Internships this season. Radio check, do you copy?”
+          </p>
+        </FadeUp>
 
-        <div className="grid gap-10 lg:grid-cols-2">
+        <FadeUp delay={0.08} className="grid gap-10 lg:grid-cols-2">
           <form
             className="space-y-4"
             onSubmit={(e) => {
@@ -120,7 +123,7 @@ export function TeamRadio() {
               </a>
             </div>
           </div>
-        </div>
+        </FadeUp>
       </div>
       <Toast message={toast} />
     </section>

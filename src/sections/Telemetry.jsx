@@ -16,6 +16,7 @@ import { useCodeforces } from '../hooks/useCodeforces'
 import { useGitHubProjects } from '../hooks/useGitHubProjects'
 import { useCodeChef } from '../hooks/useCodeChef'
 import { useLeetCode } from '../hooks/useLeetCode'
+import { FadeUp } from '../components/MotionReveal'
 
 const tabs = [
   { id: 'cf', label: 'Codeforces' },
@@ -34,35 +35,39 @@ export function Telemetry() {
   return (
     <section id="telemetry" className="px-4 py-16 sm:px-6 md:py-24">
       <div className="mx-auto max-w-6xl">
-        <SectionHeader
-          kicker="Sector 1 · Live delta"
-          title="Telemetry"
-          subtitle="Competitive programming dashboard. Numbers you can verify on the official profiles."
-        />
+        <FadeUp>
+          <SectionHeader
+            kicker="Sector 1 · Live delta"
+            title="Telemetry"
+            subtitle="Competitive programming dashboard. Numbers you can verify on the official profiles."
+          />
+        </FadeUp>
 
-        <div role="tablist" aria-label="Platforms" className="mb-6 flex flex-wrap gap-2">
-          {tabs.map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              role="tab"
-              aria-selected={tab === t.id}
-              onClick={() => setTab(t.id)}
-              className={`px-4 py-2 font-mono text-[11px] tracking-[0.18em] uppercase cursor-pointer ${
-                tab === t.id ? 'bg-racing text-white' : 'border border-white/15 text-silver'
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
+        <FadeUp delay={0.05}>
+          <div role="tablist" aria-label="Platforms" className="mb-6 flex flex-wrap gap-2">
+            {tabs.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                role="tab"
+                aria-selected={tab === t.id}
+                onClick={() => setTab(t.id)}
+                className={`px-4 py-2 font-mono text-[11px] tracking-[0.18em] uppercase cursor-pointer transition-colors ${
+                  tab === t.id ? 'bg-racing text-white' : 'border border-white/15 text-silver hover:border-white/40'
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
 
-        <div className="min-h-[340px] border border-white/10 bg-surface/70 p-4 sm:p-6">
-          {tab === 'cf' ? <CodeforcesPanel cf={cf} /> : null}
-          {tab === 'cc' ? <CodeChefPanel cc={cc} /> : null}
-          {tab === 'lc' ? <LeetCodePanel lc={lc} /> : null}
-          {tab === 'gh' ? <GitHubPanel gh={gh} /> : null}
-        </div>
+          <div className="min-h-[340px] border border-white/10 bg-surface/70 p-4 sm:p-6">
+            {tab === 'cf' ? <CodeforcesPanel cf={cf} /> : null}
+            {tab === 'cc' ? <CodeChefPanel cc={cc} /> : null}
+            {tab === 'lc' ? <LeetCodePanel lc={lc} /> : null}
+            {tab === 'gh' ? <GitHubPanel gh={gh} /> : null}
+          </div>
+        </FadeUp>
         <p className="mt-3 font-mono text-[10px] tracking-widest text-silver uppercase">
           Last updated {cp.lastUpdated}
           {tab === 'cf' && cf.status === 'ok' ? ` · Codeforces live ${cf.authenticated ? '(authenticated)' : ''} ${cf.lastSynced ? `· ${cf.lastSynced}` : ''}` : ''}
