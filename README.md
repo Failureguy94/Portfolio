@@ -55,9 +55,25 @@ Results are cached for five minutes per tab.
 | --- | --- |
 | `node scripts/make-og.js` | Re-renders the 1200×630 `public/og.png` title card from `profile.js` (needs network for fonts). Run it after changing the name or hero caption |
 | `node scripts/screenshots.js [url] [dir]` | Screenshots every section at 390, 768 and 1440 px |
-| `node scripts/verify.js [url]` | Checks horizontal scroll, the countdown and Skip credits by keyboard, link `rel`, external links, the resume, OG tags, and reduced-motion behaviour |
+| `node scripts/verify.js [url]` | Checks horizontal scroll, the countdown and Skip credits by keyboard, link `rel`, external links, the resume, OG tags, the blood artwork file and its `aria-hidden` layer, no TODO strings, and reduced-motion behaviour |
+| `npm run art` | Re-renders the hidden hero artwork (see below) |
+| `node scripts/check-reveal.js [url] [dir]` | Screenshots the hero reveal mid-trail and 2.5 s later at 390, 768 and 1440 px; checks the loop stops when idle, long tasks, CLS, the sweep and reduced motion |
 
 The Playwright scripts need a browser once: `npx playwright install chromium`.
+
+## Hidden hero artwork (blood reveal)
+
+A blood stain and a microscope slide are hidden behind the hero name. Moving the pointer (or dragging a finger sideways) wipes them into view along a soft trail that fades out again. On the first visit of a session, one short automatic sweep shows the effect after the intro.
+
+- **Source:** `art/blood-slide.svg`, an editable SVG (edge roughness, clots, rim shadow and gloss are SVG filters, commented in the file). The slide label's text is filled from `src/data/profile.js` at render time, so it never needs editing by hand. Geometry the hero relies on (pool centre and radius, slide centre, visible extent) is in `src/lib/bloodArt.js`; update it if you move things in the SVG.
+- **Regenerate:** `npm run art` renders `public/art/blood-slide.webp` (transparent, 2400×1440, about 155 KB) and a PNG fallback with Playwright. It also prints the contrast of the black name over the pool and warns if it drops below 3:1 or if the WebP exceeds 250 KB. `--preview out.png` saves the art over the hero paper colour.
+- **Tune the trail:** constants at the top of `src/hooks/useTrailMask.js`:
+  - `BRUSH_RADIUS` (90 px at a 1440 px hero; scales with width, clamped by `BRUSH_MIN`/`BRUSH_MAX`), `BRUSH_JITTER`, `SPEED_BOOST`
+  - `FADE_MS`: how long a stamp takes to disappear completely (1600 ms)
+  - `MAX_OPACITY` (0.9): the art's strongest opacity. Lowering it also lightens the pool behind the name
+  - `STATIC_OPACITY` (0.12): the still art shown under reduced motion
+  - `SWEEP_MS`: length of the discovery sweep
+- **Behaviour:** the animation loop only runs while some trail is visible, and stops when the hero is offscreen or the tab is hidden. The layer is `aria-hidden`, ignores the pointer, and is absolutely positioned, so it cannot block clicks or shift layout. If the artwork fails to load, nothing happens.
 
 ## Motion and accessibility
 
@@ -69,10 +85,10 @@ The Playwright scripts need a browser once: `npx playwright install chromium`.
   - Two film-strip marquees run between sections.
   - The numbers and skills sections use glass panels over drifting colour fields.
   - Numbers roll up into place, and a scroll-progress line runs under the nav.
-- Under `prefers-reduced-motion` there is no countdown, parallax, marquee, grain flicker or credit roll, and every element shows in its final state.
+- Under `prefers-reduced-motion` the hero artwork sits still at 12% opacity, with no trail or sweep. There is also no countdown, parallax, marquee, grain flicker or credit roll, and every element shows in its final state.
 - The end-credits roll pauses on hover or focus. "Skip credits" moves focus to the contact frame.
 - Colour pairs used for text are AA or better: cream on black 15.2:1, mustard on black 8.9:1. Orange-red is used for shapes only.
 
 ## Credits
 
-Fonts: Anton (self-hosted in `public/fonts`), Source Serif 4 and Inter, all under the SIL Open Font License 1.1.
+Fonts: Anton (self-hosted in `public/fonts`), Source Serif 4, Inter and Special Elite (`@fontsource/special-elite`, used only when the artwork is rendered), all under the SIL Open Font License 1.1.

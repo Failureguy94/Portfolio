@@ -92,6 +92,7 @@ export function useTrailMask({ hostRef, canvasRef, image, getRect, reduced, swee
     let sweepPending = false
     let sweepStart = 0
     let sweepTimer = 0
+    let disposed = false
     const pointer = { last: null }
     const sweeper = { last: null }
 
@@ -100,11 +101,52 @@ export function useTrailMask({ hostRef, canvasRef, image, getRect, reduced, swee
       canvas.dataset.running = v ? 'true' : 'false'
     }
 
+    let sizeKey = ''
+    let artToken = 0
+
+    function drawStatic() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      if (!art) return
+      ctx.globalAlpha = STATIC_OPACITY
+      ctx.drawImage(art, 0, 0)
+      ctx.globalAlpha = 1
+    }
+
+    // Scale the artwork once per size, off the main thread where supported, so each frame is a 1:1 copy.
+    function scaleArt(w, h) {
+      const token = ++artToken
+      const fallback = () => {
+        const c = document.createElement('canvas')
+        c.width = w
+        c.height = h
+        const a = c.getContext('2d')
+        a.imageSmoothingQuality = 'high'
+        a.drawImage(image, 0, 0, w, h)
+        return c
+      }
+      const made =
+        typeof createImageBitmap === 'function'
+          ? createImageBitmap(image, { resizeWidth: w, resizeHeight: h, resizeQuality: 'high' }).catch(fallback)
+          : Promise.resolve(fallback())
+      made.then((bmp) => {
+        if (token !== artToken || disposed) {
+          bmp.close?.()
+          return
+        }
+        art?.close?.()
+        art = bmp
+        if (reduced) drawStatic()
+      })
+    }
+
     function layout() {
       const r = getRectRef.current()
       if (!r || r.w <= 0) return
-      rect = r
       const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR)
+      const key = [r.x, r.y, r.w, r.h, dpr].map((v) => v.toFixed(1)).join()
+      if (key === sizeKey) return
+      sizeKey = key
+      rect = r
       canvas.style.left = `${r.x}px`
       canvas.style.top = `${r.y}px`
       canvas.style.width = `${r.w}px`
@@ -115,22 +157,8 @@ export function useTrailMask({ hostRef, canvasRef, image, getRect, reduced, swee
       trail.height = Math.ceil(r.h * TRAIL_SCALE)
       base = clamp((BRUSH_RADIUS * host.clientWidth) / 1440, BRUSH_MIN, BRUSH_MAX)
       box = null
-
-      // scale the artwork once per size, so each frame is a 1:1 copy
-      art = document.createElement('canvas')
-      art.width = canvas.width
-      art.height = canvas.height
-      const a = art.getContext('2d')
-      a.imageSmoothingQuality = 'high'
-      a.drawImage(image, 0, 0, art.width, art.height)
-
-      if (reduced) {
-        ctx.globalAlpha = STATIC_OPACITY
-        ctx.drawImage(art, 0, 0)
-        ctx.globalAlpha = 1
-      } else {
-        reset()
-      }
+      if (!reduced) reset()
+      scaleArt(canvas.width, canvas.height)
     }
 
     function reset() {
@@ -211,6 +239,10 @@ export function useTrailMask({ hostRef, canvasRef, image, getRect, reduced, swee
       }
 
       ctx.clearRect(0, 0, canvas.width, canvas.height)
+      if (!art) {
+        raf = requestAnimationFrame(frame)
+        return
+      }
       ctx.globalAlpha = 1
       ctx.drawImage(art, 0, 0)
       ctx.globalCompositeOperation = 'destination-in'
@@ -250,15 +282,16 @@ export function useTrailMask({ hostRef, canvasRef, image, getRect, reduced, swee
       start()
     }
 
-    layout()
-    const ro = new ResizeObserver(() => layout())
+    const ro = new ResizeObserver(() => layout()) // fires once on observe, too
     ro.observe(host)
     document.fonts?.ready.then(() => layout())
 
     if (reduced) {
       ctrl.current = null
       return () => {
+        disposed = true
         ro.disconnect()
+        art?.close?.()
         ctx.clearRect(0, 0, canvas.width, canvas.height)
       }
     }
@@ -299,8 +332,10 @@ export function useTrailMask({ hostRef, canvasRef, image, getRect, reduced, swee
 
     return () => {
       ctrl.current = null
+      disposed = true
       clearTimeout(sweepTimer)
       reset()
+      art?.close?.()
       ro.disconnect()
       io.disconnect()
       host.removeEventListener('pointermove', onMove)

@@ -1,10 +1,27 @@
 // End-to-end checks against a running server.
 // Usage: node scripts/verify.js [baseUrl]
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
+import path from 'node:path'
 import { chromium, request } from 'playwright'
 
 const base = process.argv[2] ?? 'http://localhost:5173'
 const results = []
 const check = (name, ok, detail = '') => results.push({ name, ok, detail })
+
+// 0. static checks: blood artwork built, no TODO left in source
+{
+  const webp = 'public/art/blood-slide.webp'
+  check('blood artwork exists (npm run art)', existsSync(webp) && existsSync('public/art/blood-slide.png'))
+  check('blood artwork WebP is under 250 KB', existsSync(webp) && statSync(webp).size < 250 * 1024, existsSync(webp) ? `${(statSync(webp).size / 1024).toFixed(0)} KB` : 'missing')
+  const walk = (dir) =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((d) =>
+      d.isDirectory() ? walk(path.join(dir, d.name)) : [path.join(dir, d.name)],
+    )
+  const todos = [...walk('src'), ...walk('art'), 'scripts/make-blood-art.js']
+    .filter((f) => /\.(jsx?|svg|css|json)$/.test(f))
+    .filter((f) => readFileSync(f, 'utf8').includes('TODO'))
+  check('no TODO strings in src/, art/ or the art script', todos.length === 0, todos.join(', '))
+}
 
 const browser = await chromium.launch()
 
@@ -79,6 +96,14 @@ for (const width of [360, 390, 768, 1440]) {
   await page.waitForTimeout(900)
   const active = await page.evaluate(() => document.activeElement?.id)
   check('Skip credits moves focus to the final frame', active === 'final', active)
+
+  await page.evaluate(() => window.scrollTo(0, 0))
+  const reveal = await page.$$eval('[data-blood-reveal]', (els) =>
+    els.map((e) => ({ hidden: e.getAttribute('aria-hidden'), pe: getComputedStyle(e).pointerEvents, inHero: !!e.closest('#top') })),
+  )
+  check('blood reveal is in the hero, aria-hidden, pointer-events none', reveal.length === 1 && reveal.every((r) => r.hidden === 'true' && r.pe === 'none' && r.inHero), JSON.stringify(reveal))
+  const artRes = await api.get(`${base}/art/blood-slide.webp`)
+  check('blood artwork served', artRes.status() === 200 && /webp/.test(artRes.headers()['content-type'] ?? ''), artRes.headers()['content-type'])
 
   const ogImage = await page.$eval('meta[property="og:image"]', (m) => m.content)
   check('og:image is an absolute URL', /^https:\/\//.test(ogImage), ogImage)
