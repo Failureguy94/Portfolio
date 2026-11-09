@@ -3,9 +3,8 @@ import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
 import { useTrailMask } from '../hooks/useTrailMask'
 import { loadAfterFirstPaint } from '../lib/loadArt'
 
-const SRC = ['/art/cast-night.webp']
-// keep the cinema and the seated figure in frame when the portrait image is cropped
-const FOCUS = [0.5, 0.66]
+const SRC = ['/art/cast-scene.png'] // used exactly as supplied: never cropped or stretched
+const NUDGE = 48 // px the image sits to the right of its slot, where there is room
 const GAP = 24 // px kept clear around the heading and the cards
 const MIN_STRIP = 180 // narrower than this, the left strip is not worth using
 
@@ -27,6 +26,20 @@ function within(el, host) {
   return { x, y, w: el.offsetWidth, h: el.offsetHeight }
 }
 
+// the image's own shape fitted inside `area` (whole image visible), then nudged right
+function fitImage(area, image, maxRight) {
+  if (!area || !image) return area
+  const a = (image.naturalWidth || image.width) / (image.naturalHeight || image.height)
+  let w = area.w
+  let h = w / a
+  if (h > area.h) {
+    h = area.h
+    w = h * a
+  }
+  const x = Math.min(area.x + (area.w - w) / 2 + NUDGE, maxRight - w)
+  return { x: Math.max(area.x, x), y: area.y + (area.h - h) / 2, w, h }
+}
+
 function sceneRect(host, header, grid) {
   if (!host || !header || !grid) return null
   const cards = [...grid.children].map((c) => within(c, host))
@@ -37,15 +50,15 @@ function sceneRect(host, header, grid) {
   const cardsBottom = Math.max(...cards.map((c) => c.y + c.h))
 
   const stripW = cardsLeft - GAP
-  if (stripW >= MIN_STRIP) return { x: 0, y: top, w: stripW, h: cardsBottom - top }
+  if (stripW >= MIN_STRIP) return { area: { x: 0, y: top, w: stripW, h: cardsBottom - top }, maxRight: cardsLeft - 8 }
 
   const cols = getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length
   if (cols > 1 && cards.length % cols !== 0) {
     const last = cards.at(-1)
     const step = cards[1].x - cards[0].x
-    return { x: last.x + step, y: last.y, w: last.w, h: last.h }
+    return { area: { x: last.x + step, y: last.y, w: last.w, h: last.h }, maxRight: host.clientWidth - 8 }
   }
-  return { x: 0, y: top, w: host.clientWidth, h: Math.max(0, host.clientHeight - top) }
+  return { area: { x: 0, y: top, w: host.clientWidth, h: Math.max(0, host.clientHeight - top) }, maxRight: host.clientWidth }
 }
 
 /**
@@ -59,12 +72,12 @@ export function CastReveal({ hostRef, headerRef, gridRef }) {
 
   useEffect(() => loadAfterFirstPaint(SRC, setImage), [])
 
-  const getRect = useCallback(
-    () => sceneRect(hostRef.current, headerRef.current, gridRef.current),
-    [hostRef, headerRef, gridRef],
-  )
+  const getRect = useCallback(() => {
+    const slot = sceneRect(hostRef.current, headerRef.current, gridRef.current)
+    return slot && fitImage(slot.area, image, slot.maxRight)
+  }, [hostRef, headerRef, gridRef, image])
 
-  useTrailMask({ hostRef, canvasRef, image, getRect, reduced, cover: FOCUS })
+  useTrailMask({ hostRef, canvasRef, image, getRect, reduced })
 
   return (
     <canvas

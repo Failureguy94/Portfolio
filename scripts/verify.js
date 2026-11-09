@@ -12,7 +12,7 @@ const check = (name, ok, detail = '') => results.push({ name, ok, detail })
 {
   const webp = 'public/art/blood-slide.webp'
   check('blood artwork exists (npm run art)', existsSync(webp) && existsSync('public/art/blood-slide.png'))
-  check('cast night scene exists (npm run art)', existsSync('public/art/cast-night.webp'))
+  check('cast scene image exists', existsSync('public/art/cast-scene.png'))
   check('blood artwork WebP is under 250 KB', existsSync(webp) && statSync(webp).size < 250 * 1024, existsSync(webp) ? `${(statSync(webp).size / 1024).toFixed(0)} KB` : 'missing')
   const walk = (dir) =>
     readdirSync(dir, { withFileTypes: true }).flatMap((d) =>
