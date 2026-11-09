@@ -14,6 +14,7 @@ export default function CastCrew() {
   const t = copy.cast
   const sectionRef = useRef(null)
   const headerRef = useRef(null)
+  const gridRef = useRef(null)
   return (
     <Reel ref={sectionRef} id="cast" tone="paper" label="cast-title" className="touch-pan-y overflow-hidden px-4 py-16 md:px-8 md:py-24">
       {/* cut-paper shapes behind frosted cards */}
@@ -30,8 +31,8 @@ export default function CastCrew() {
         <path filter="url(#rough)" fill="var(--color-bass)" d={pebble} />
       </svg>
 
-      {/* hidden night scene, revealed by the pointer: above the shapes, below the cards */}
-      <CastReveal hostRef={sectionRef} headerRef={headerRef} />
+      {/* hidden night scene beside the cards, revealed by the pointer */}
+      <CastReveal hostRef={sectionRef} headerRef={headerRef} gridRef={gridRef} />
 
       <div className="relative mx-auto max-w-[1280px]">
         <header ref={headerRef} className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
@@ -41,14 +42,14 @@ export default function CastCrew() {
           </Reveal>
         </header>
 
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 md:mt-14 lg:grid-cols-3">
+        <div ref={gridRef} className="mt-10 grid gap-5 sm:grid-cols-2 md:mt-14 lg:grid-cols-3">
           {skillGroups.map((g, gi) => (
             <Reveal
               as="section"
               key={g.name}
               delay={gi * 110}
               aria-label={g.name}
-              className="glass-paper glass-window rounded-2xl p-6 transition-transform duration-500 hover:-translate-y-1"
+              className="glass-paper rounded-2xl p-6 transition-transform duration-500 hover:-translate-y-1"
             >
               <h3 className="font-serif text-lg italic text-dim-ink">{g.name}</h3>
               <ul className="mt-3 flex flex-col gap-2">

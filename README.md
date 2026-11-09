@@ -80,7 +80,11 @@ A blood pool and a microscope slide are hidden behind the hero name. Moving the 
 
 ## Hidden Cast & Crew scene
 
-The Cast & Crew section hides a night scene behind the skill cards: a lone figure seen from behind, sitting on a kerb across from an old cinema under a sodium lamp. The same cursor trail reveals it (`src/components/CastReveal.jsx`, sharing `useTrailMask`). It covers everything below the heading, so it shows wherever the pointer moves over or between the cards, and never sits behind the heading or intro. The cards there use a thinner frost (`.glass-window`) so the scene shows through, with the small text darkened to stay AA over it.
+The Cast & Crew section hides a night scene in the empty space beside the skill cards: a lone figure seen from behind, sitting on a kerb across from an old cinema under a sodium lamp. The same cursor trail reveals it (`src/components/CastReveal.jsx`, sharing `useTrailMask`). Where it sits depends on the space available, so it is never under a card or behind the heading:
+
+1. the strip left of the cards on wide screens (at least 180 px wide, e.g. 1900 px windows);
+2. otherwise the empty grid cell next to the last card (e.g. 1440 px, three columns);
+3. on phones, below the heading behind the cards.
 
 - **Source:** `art/cast-night.svg`, an original illustration. To use a photograph made from the same brief instead, save it as `art/cast-night-photo.jpg` (or `.png`/`.webp`) and run `npm run art`. It is cover-cropped to 4:5 and written to `public/art/cast-night.webp`.
 - **Framing:** the portrait image is cropped to the wide section around `FOCUS` in `CastReveal.jsx` (`[0.5, 0.66]` keeps the cinema and the figure in view).

@@ -183,17 +183,6 @@ body {
   -webkit-backdrop-filter: blur(18px) saturate(130%);
 }
 
-/* Cast & Crew cards: thinner frost, so the night scene revealed behind them shows through.
-   Text inside stays AA over the darkest part of the scene: ink 6.4:1, small text (#332e2a) 4.6:1. */
-.glass-window {
-  background: rgba(240, 230, 208, 0.62);
-  backdrop-filter: blur(8px) saturate(120%);
-  -webkit-backdrop-filter: blur(8px) saturate(120%);
-}
-.glass-window .text-dim-ink {
-  color: #332e2a;
-}
-
 /* Soft colour fields that drift behind glass panels. */
 .blob {
   position: absolute;
