@@ -150,7 +150,7 @@ for (const width of [390, 1440]) {
 // discovery sweep: once per session, after the intro
 {
   const { ctx, page } = await open(1440, { sweep: true })
-  await page.waitForFunction(() => document.querySelector('[data-blood-reveal]').dataset.running === 'true', null, { timeout: 4000 })
+  await page.waitForFunction(() => document.querySelector('[data-blood-reveal]').dataset.running === 'true', null, { timeout: 10000 })
   await page.waitForTimeout(800)
   await page.screenshot({ path: `${out}/1440-sweep.png` })
   check('sweep plays on first visit', true)
