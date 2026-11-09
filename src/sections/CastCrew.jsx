@@ -50,8 +50,8 @@ export default function CastCrew() {
               delay={gi * 110}
               aria-label={g.name}
               className={`glass-paper rounded-2xl p-6 transition-transform duration-500 hover:-translate-y-1 ${
-                // a lone card on the last row sits at the right, under the card above it
-                gi === skillGroups.length - 1 && skillGroups.length % 3 === 1 ? 'lg:col-start-3' : ''
+                // a lone card on the last row sits in the middle column
+                gi === skillGroups.length - 1 && skillGroups.length % 3 === 1 ? 'lg:col-start-2' : ''
               }`}
             >
               <h3 className="font-serif text-lg italic text-dim-ink">{g.name}</h3>
