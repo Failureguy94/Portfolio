@@ -35,8 +35,8 @@ Conventions:
 
 ### Live numbers
 
-- **Codeforces:** fetched in the browser from the public API (`user.info`, `user.rating`). The current rank label is only shown when it comes from the live API, never from the snapshot.
-- **LeetCode:** `/api/leetcode` (a Vercel function) queries LeetCode's GraphQL endpoint. The fallback shows `cp.json`'s `solved` with a `+`.
+- **Codeforces:** fetched in the browser from the public API (`user.info`, `user.rating`). The current rank label is only shown when it comes from the live API, never from the snapshot. The solved count comes from `/api/codeforces`, which counts unique accepted problems in `user.status` server-side (the raw list is hundreds of KB) and is cached for an hour.
+- **LeetCode:** `/api/leetcode` (a Vercel function) queries LeetCode's GraphQL endpoint. The fallback shows `cp.json`'s `solved` with a `+`. LeetCode's public API does not currently report a contest rating for this account (it lists each contest at 1500), so the rating and peak come from `cp.json` (`leetcode.rating`, `maxRating`, `ratingAsOf`). Update those after each contest; if the API starts reporting a rating, it is used instead. Until the API's history agrees with that rating, the chart shows LeetCode as one point at `ratingAsOf`.
 - **CodeChef:** `/api/codechef` reads a stats service if `CODECHEF_API_KEY` is set, otherwise the public profile page.
 
 The contest chart puts all three platforms on one time axis: Codeforces from `user.rating`, CodeChef from the rating history embedded in the public profile page (read by `/api/codechef`), and LeetCode from `userContestRankingHistory` (read by `/api/leetcode`). When a live fetch fails, the chart uses the `history` arrays in `cp.json` (`{ t, rating, name }`, `t` in Unix seconds).

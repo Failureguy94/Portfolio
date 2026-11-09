@@ -4,7 +4,7 @@ import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
 
 const W = 560
 const H = 340
-const PAD = { l: 44, r: 62, t: 20, b: 36 }
+const PAD = { l: 44, r: 76, t: 20, b: 36 }
 const LABEL_GAP = 22 // min vertical gap between end labels
 const HIT = 30 // hover radius in chart units
 
@@ -165,10 +165,12 @@ export function RatingChart({ series, title }) {
             return (
               <g key={id} opacity={hs && hs.id !== id ? 0.35 : 1}>
                 {ex < W - PAD.r - 2 || Math.abs(ey - ly) > 1 ? (
-                  <path d={`M${ex} ${ey}L${W - PAD.r + 4} ${ly}`} stroke={s.color} strokeWidth="1" strokeDasharray="2 3" opacity="0.7" fill="none" />
+                  <path d={`M${ex} ${ey}L${W - PAD.r + 8} ${ly}`} stroke={s.color} strokeWidth="1" strokeDasharray="2 3" opacity="0.7" fill="none" />
                 ) : null}
                 <Marker shape={s.shape} x={ex} y={ey} color={s.color} size={9} />
-                <text x={W - PAD.r + 10} y={ly + 5} fontFamily="Anton, Impact, sans-serif" fontSize="18" fill="var(--color-paper)">
+                {/* the marker repeats beside the value, so each number names its platform */}
+                <Marker shape={s.shape} x={W - PAD.r + 14} y={ly} color={s.color} size={8} />
+                <text x={W - PAD.r + 23} y={ly + 6} fontFamily="Anton, Impact, sans-serif" fontSize="18" fill="var(--color-paper)">
                   {value}
                 </text>
               </g>

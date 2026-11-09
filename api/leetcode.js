@@ -21,6 +21,9 @@ export default async function handler(req, res) {
       }
       profile { ranking reputation }
     }
+    userContestRanking(username: $username) {
+      rating
+    }
     userContestRankingHistory(username: $username) {
       attended
       rating
@@ -56,6 +59,9 @@ export default async function handler(req, res) {
       .filter((c) => c.attended && c.contest)
       .map((c) => ({ t: c.contest.startTime, rating: Math.round(c.rating), name: c.contest.title }))
 
+    const contestRating = json?.data?.userContestRanking?.rating
+    const rating = contestRating ? Math.round(contestRating) : null
+
     let solved = 0
     let easy = 0
     let medium = 0
@@ -75,6 +81,7 @@ export default async function handler(req, res) {
       medium,
       hard,
       ranking,
+      rating,
       contestHistory,
       authenticated: Boolean(sessionToken),
       source: 'live',

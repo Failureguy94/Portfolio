@@ -4,6 +4,7 @@ import { defineConfig, loadEnv } from 'vite'
 import { siteMeta, siteUrl } from './src/data/metadata.js'
 import leetcodeHandler from './api/leetcode.js'
 import codechefHandler from './api/codechef.js'
+import codeforcesHandler from './api/codeforces.js'
 
 const escapeAttr = (v) => String(v).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
 
@@ -25,6 +26,12 @@ function htmlMetaPlugin() {
   }
 }
 
+const apiRoutes = {
+  '/api/leetcode': leetcodeHandler,
+  '/api/codechef': codechefHandler,
+  '/api/codeforces': codeforcesHandler,
+}
+
 function telemetryApiPlugin() {
   return {
     name: 'telemetry-api-plugin',
@@ -32,7 +39,8 @@ function telemetryApiPlugin() {
       server.middlewares.use(async (req, res, next) => {
         try {
           const url = new URL(req.url, 'http://localhost')
-          if (url.pathname === '/api/leetcode') {
+          const handler = apiRoutes[url.pathname]
+          if (handler) {
             const reqShim = {
               query: Object.fromEntries(url.searchParams.entries()),
               headers: req.headers,
@@ -51,29 +59,7 @@ function telemetryApiPlugin() {
                 }
               },
             }
-            await leetcodeHandler(reqShim, resShim)
-            return
-          }
-          if (url.pathname === '/api/codechef') {
-            const reqShim = {
-              query: Object.fromEntries(url.searchParams.entries()),
-              headers: req.headers,
-              method: req.method,
-            }
-            const resShim = {
-              setHeader: (k, v) => res.setHeader(k, v),
-              status: (code) => {
-                res.statusCode = code
-                return {
-                  json: (data) => {
-                    res.setHeader('Content-Type', 'application/json')
-                    res.end(JSON.stringify(data))
-                  },
-                  end: () => res.end(),
-                }
-              },
-            }
-            await codechefHandler(reqShim, resShim)
+            await handler(reqShim, resShim)
             return
           }
         } catch {

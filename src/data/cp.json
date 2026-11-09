@@ -5,6 +5,7 @@
     "profileUrl": "https://codeforces.com/profile/Sarthak14313",
     "rating": 1434,
     "maxRating": 1434,
+    "solved": 322,
     "history": [
       {
         "contestId": 2037,
@@ -384,6 +385,9 @@
   "leetcode": {
     "handle": "sarthak0703y",
     "profileUrl": "https://leetcode.com/u/sarthak0703y/",
+    "rating": 1640,
+    "maxRating": 1640,
+    "ratingAsOf": "2026-11-09",
     "solved": 400,
     "solvedIsFloor": true,
     "history": [

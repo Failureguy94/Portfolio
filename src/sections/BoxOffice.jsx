@@ -19,6 +19,15 @@ const CHART_SERIES = {
   leetcode: { name: 'LeetCode', color: '#d9468a', shape: 'diamond' },
 }
 
+// LeetCode's public history can lag the real rating (it reports 1500 until it catches up).
+// When it disagrees with the known current rating, plot only that rating, at the date it was recorded.
+function leetcodePoints({ history = [], rating }) {
+  if (!rating) return history
+  if (history.length && history.at(-1).rating === rating) return history
+  const t = Math.round(Date.parse(`${cp.leetcode.ratingAsOf ?? cp.lastUpdated}T12:00:00Z`) / 1000)
+  return [{ t, rating, name: 'Current contest rating' }]
+}
+
 const capitalise = (s) => (s ? s.replace(/\b\w/g, (c) => c.toUpperCase()) : null)
 
 export default function BoxOffice() {
@@ -34,7 +43,7 @@ export default function BoxOffice() {
       note: cf.source === 'live' ? capitalise(cf.data.rank) : null,
       rating: cf.data.rating,
       peak: cf.data.maxRating,
-      solved: null,
+      solved: cf.data.solved,
       url: cp.codeforces.profileUrl,
     },
     {
@@ -48,8 +57,8 @@ export default function BoxOffice() {
     {
       name: 'LeetCode',
       note: null,
-      rating: null,
-      peak: null,
+      rating: lc.data.rating,
+      peak: lc.data.maxRating,
       solved: lc.data.solved,
       solvedSuffix: lcFloor ? '+' : '',
       url: cp.leetcode.profileUrl,
@@ -63,7 +72,7 @@ export default function BoxOffice() {
       points: (cf.data.history ?? []).map((h) => ({ t: h.ratingUpdateTimeSeconds, rating: h.newRating, name: h.contestName })),
     },
     { id: 'codechef', ...CHART_SERIES.codechef, points: cc.data.history ?? [] },
-    { id: 'leetcode', ...CHART_SERIES.leetcode, points: lc.data.history ?? [] },
+    { id: 'leetcode', ...CHART_SERIES.leetcode, points: leetcodePoints(lc.data) },
   ]
 
   const big = 'font-title text-[clamp(1.9rem,3.6vw,3rem)] tabular-nums'
