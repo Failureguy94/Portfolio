@@ -39,8 +39,4 @@ export const skillGroups = [
       { name: 'Gemini API', usedIn: ['Veri Bounty', 'Codekick'] },
     ],
   },
-  {
-    name: 'Contests',
-    items: [{ name: 'C++', usedIn: ['Codeforces', 'CodeChef'] }],
-  },
 ]
