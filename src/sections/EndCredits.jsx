@@ -1,6 +1,7 @@
 import { CopyEmail } from '../components/CopyEmail'
 import { ExtLink } from '../components/ExtLink'
 import { Reel } from '../components/Reel'
+import { Reveal } from '../components/Reveal'
 import { copy } from '../data/copy'
 import { endCredits, profile } from '../data/profile'
 
@@ -29,14 +30,14 @@ export default function EndCredits() {
   return (
     <Reel id="contact" tone="ink" label="contact-title">
       <div className="relative px-4 md:px-8">
-        <div className="flex justify-end pt-8">
+        <div className="flex justify-end pt-6">
           <a href="#final" onClick={skip} className="link font-sans text-base font-semibold text-mustard">
             {t.skip}
           </a>
         </div>
 
         <div
-          className="credit-window relative mx-auto h-[78svh] max-w-[760px] overflow-hidden motion-reduce:h-auto"
+          className="credit-window relative mx-auto h-[44svh] max-w-[760px] overflow-hidden motion-reduce:h-auto"
           tabIndex={0}
           role="region"
           aria-label={t.rollLabel}
@@ -47,7 +48,7 @@ export default function EndCredits() {
               <ul
                 key={k}
                 aria-hidden={k === 1 ? 'true' : undefined}
-                className={`flex flex-col gap-12 py-[39svh] motion-reduce:py-16 ${k === 1 ? 'motion-reduce:hidden' : ''}`}
+                className={`flex flex-col gap-9 py-[22svh] motion-reduce:py-10 ${k === 1 ? 'motion-reduce:hidden' : ''}`}
               >
                 {endCredits.map((c) => (
                   <Credit key={c.name} c={c} />
@@ -61,20 +62,22 @@ export default function EndCredits() {
       <div
         id="final"
         tabIndex={-1}
-        className="flex min-h-[100svh] flex-col justify-center px-4 pb-16 pt-24 outline-none md:px-8"
+        className="relative mx-auto flex max-w-[1440px] flex-col justify-center px-4 pb-14 pt-16 outline-none md:px-8 md:pb-20 md:pt-20"
       >
-        <h2 id="contact-title" className="font-serif text-xl italic text-dim md:text-2xl">
+        <Reveal as="h2" id="contact-title" className="font-serif text-xl italic text-dim md:text-2xl">
           {t.finalHeading}
-        </h2>
+        </Reveal>
+        <Reveal delay={120}>
         <a
           href={`mailto:${profile.email}`}
-          className="font-title mt-4 block whitespace-nowrap text-[clamp(1.75rem,8.1vw,9.5rem)] normal-case leading-[0.95] hover:text-mustard"
+          className="font-title mt-4 block whitespace-nowrap text-[clamp(1.75rem,6.8vw,7.5rem)] normal-case leading-[0.95] transition-colors duration-300 hover:text-mustard"
           style={{ textTransform: 'none' }}
         >
           {profile.email}
         </a>
+        </Reveal>
 
-        <div className="mt-12 flex flex-wrap items-center gap-x-9 gap-y-5 font-sans text-lg font-semibold">
+        <Reveal delay={240} className="mt-10 flex flex-wrap items-center gap-x-9 gap-y-5 font-sans text-lg font-semibold">
           <CopyEmail email={profile.email} labels={t} className="btn-fill bg-paper text-ink" />
           <ExtLink href={profile.github.url}>
             GitHub<span className="sr-only"> (opens in a new tab)</span>
@@ -85,9 +88,9 @@ export default function EndCredits() {
           <a href={profile.resumePath} className="link" download>
             {copy.resume}
           </a>
-        </div>
+        </Reveal>
 
-        <div className="mt-[18vh] flex flex-wrap items-end justify-between gap-6 border-t border-ink-2 pt-8">
+        <div className="mt-14 flex flex-wrap items-end justify-between gap-6 border-t border-ink-2 pt-7 md:mt-20">
           <p className="font-title text-[clamp(3rem,7vw,6rem)]">{t.theEnd}</p>
           <p className="font-serif text-lg italic text-mustard">{profile.availability}</p>
         </div>

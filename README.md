@@ -39,7 +39,7 @@ Conventions:
 - **LeetCode:** `/api/leetcode` (a Vercel function) queries LeetCode's GraphQL endpoint. The fallback shows `cp.json`'s `solved` with a `+`.
 - **CodeChef:** `/api/codechef` reads a stats service if `CODECHEF_API_KEY` is set, otherwise the public profile page.
 
-Results are cached for five minutes per tab. Under the table, each platform is marked as live (with the time it was checked) or as a snapshot (with its date).
+Results are cached for five minutes per tab. 
 
 ## Deploy to Vercel
 
@@ -62,7 +62,14 @@ The Playwright scripts need a browser once: `npx playwright install chromium`.
 ## Motion and accessibility
 
 - The film-leader countdown runs for 1.65 s, once per tab (`sessionStorage`). It can be skipped with Esc, Enter, Space, a click, or the focused "Skip intro" button.
-- Four motion behaviours, all CSS: wipe-in per section, hard-cut title cards, a slow push-in on the hero, and rolling digits. Under `prefers-reduced-motion` there is no countdown, grain flicker or credit roll, and every element shows in its final state.
+- Motion, almost all CSS:
+  - Text rises out of a soft blur, and headings slide in word by word.
+  - The hero has pointer parallax and a morphing cut-paper disc.
+  - Each poster animates its own parts and tilts toward the cursor.
+  - Two film-strip marquees run between sections.
+  - The numbers and skills sections use glass panels over drifting colour fields.
+  - Numbers roll up into place, and a scroll-progress line runs under the nav.
+- Under `prefers-reduced-motion` there is no countdown, parallax, marquee, grain flicker or credit roll, and every element shows in its final state.
 - The end-credits roll pauses on hover or focus. "Skip credits" moves focus to the contact frame.
 - Colour pairs used for text are AA or better: cream on black 15.2:1, mustard on black 8.9:1. Orange-red is used for shapes only.
 

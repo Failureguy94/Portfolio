@@ -13,6 +13,7 @@ export function VaultPoster({ id, alt }) {
         <circle key={a} cx={186 + Math.cos(a) * 139} cy={220 + Math.sin(a) * 139} r="6" fill="var(--color-ink)" />
       ))}
       {/* handle */}
+      <g className="spin-med" style={{ transformBox: 'view-box', transformOrigin: '186px 220px' }}>
       {[0, 120, 240].map((deg) => (
         <line
           key={deg}
@@ -26,8 +27,10 @@ export function VaultPoster({ id, alt }) {
         />
       ))}
       <circle cx="186" cy="220" r="24" fill="var(--color-ink)" />
+      </g>
       <circle cx="186" cy="220" r="9" fill="var(--color-paper)" />
       {/* magnifier */}
+      <g className="sweep-lens">
       <g transform="rotate(-8 300 352)">
         <rect x="330" y="398" width="96" height="22" rx="3" transform="rotate(45 330 398)" fill="var(--color-paper)" filter="url(#rough)" />
         <circle cx="300" cy="352" r="72" fill="var(--color-mustard)" stroke="var(--color-paper)" strokeWidth="14" />
@@ -38,6 +41,7 @@ export function VaultPoster({ id, alt }) {
           strokeWidth="13"
           strokeLinecap="square"
         />
+      </g>
       </g>
     </Poster>
   )

@@ -25,8 +25,8 @@ export const heroCaption =
 export const openingCredits = [
   { role: 'Starring', name: 'Sarthak Parkale' },
   { role: 'A production of the', name: 'GDG IIIT Nagpur core team' },
-  { role: 'Studying', name: 'B.Tech CSE' },
-  { role: 'At', name: 'IIIT Nagpur, 2024–2028' },
+  { role: 'Studying B.Tech CSE at', name: 'IIIT Nagpur' },
+  { role: 'Running time', name: '2024–2028' },
   { role: 'Filmed on location in', name: 'India' },
 ]
 

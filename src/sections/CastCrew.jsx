@@ -1,49 +1,59 @@
 import { Reel } from '../components/Reel'
+import { Reveal } from '../components/Reveal'
+import { SplitText } from '../components/SplitText'
 import { copy } from '../data/copy'
 import { skillGroups } from '../data/skills'
+import { blobPath } from '../lib/blob'
+
+const moon = blobPath([96, 90, 98, 92, 95, 88, 97, 93], 100, 100)
+const pebble = blobPath([70, 82, 66, 78, 72, 64, 80, 74], 100, 100, 0.4)
 
 export default function CastCrew() {
   const t = copy.cast
   return (
-    <Reel id="cast" tone="paper" label="cast-title" className="overflow-hidden px-4 py-28 md:px-8 md:py-40">
-      {/* a cut-paper half moon bleeding off the right edge */}
+    <Reel id="cast" tone="paper" label="cast-title" className="overflow-hidden px-4 py-16 md:px-8 md:py-24">
+      {/* cut-paper shapes behind frosted cards */}
+      <svg viewBox="0 0 200 200" className="drift pointer-events-none absolute right-[-10vw] top-[22%] h-[44vw] max-h-[560px] w-[44vw] max-w-[560px]" aria-hidden="true" focusable="false">
+        <path filter="url(#rough)" fill="var(--color-mustard)" d={moon} />
+      </svg>
       <svg
-        viewBox="0 0 200 400"
-        className="pointer-events-none absolute -right-[2px] bottom-[12%] hidden h-[46vh] w-auto lg:block"
+        viewBox="0 0 200 200"
+        className="drift pointer-events-none absolute bottom-[-6%] left-[-8vw] h-[30vw] max-h-[380px] w-[30vw] max-w-[380px]"
+        style={{ animationDelay: '-9s' }}
         aria-hidden="true"
         focusable="false"
       >
-        <path filter="url(#rough)" fill="var(--color-mustard)" d="M200 6C92 10 8 96 8 200s84 190 192 194z" />
+        <path filter="url(#rough)" fill="var(--color-bass)" d={pebble} />
       </svg>
 
-      <div className="relative mx-auto grid max-w-[1280px] gap-14 md:grid-cols-[auto_1fr] md:gap-20">
-        <header className="md:sticky md:top-24 md:self-start">
-          <h2
-            id="cast-title"
-            className="font-title text-[clamp(3.5rem,14vw,6rem)] md:rotate-180 md:text-[clamp(6rem,10vw,10rem)] md:[writing-mode:vertical-rl]"
-          >
-            {t.heading}
-          </h2>
-          <p className="mt-4 max-w-[24ch] font-serif text-lg italic md:hidden">{t.intro}</p>
+      <div className="relative mx-auto max-w-[1280px]">
+        <header className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+          <SplitText id="cast-title" text={t.heading} className="font-title text-[clamp(3.25rem,8vw,7rem)]" />
+          <Reveal as="p" delay={250} className="max-w-[28ch] font-serif text-lg italic md:pb-2 md:text-xl">
+            {t.intro}
+          </Reveal>
         </header>
 
-        <div>
-          <p className="mb-16 hidden max-w-[30ch] font-serif text-xl italic md:ml-[calc(38%+2.5rem)] md:block">{t.intro}</p>
-          <div className="flex flex-col gap-14 md:gap-20">
-            {skillGroups.map((g) => (
-              <section key={g.name} aria-label={g.name} className="grid gap-3 md:grid-cols-[38%_1fr] md:gap-10">
-                <h3 className="font-serif text-lg italic text-dim-ink md:pt-2 md:text-right md:text-xl">{g.name}</h3>
-                <ul className="flex flex-col gap-3">
-                  {g.items.map((s) => (
-                    <li key={s.name} className="flex flex-wrap items-baseline gap-x-4">
-                      <span className="font-title text-[clamp(2rem,4vw,3.25rem)]">{s.name}</span>
-                      <span className="font-sans text-sm text-dim-ink">{s.usedIn.join(', ')}</span>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            ))}
-          </div>
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 md:mt-14 lg:grid-cols-3">
+          {skillGroups.map((g, gi) => (
+            <Reveal
+              as="section"
+              key={g.name}
+              delay={gi * 110}
+              aria-label={g.name}
+              className="glass-paper rounded-2xl p-6 transition-transform duration-500 hover:-translate-y-1"
+            >
+              <h3 className="font-serif text-lg italic text-dim-ink">{g.name}</h3>
+              <ul className="mt-3 flex flex-col gap-2">
+                {g.items.map((s) => (
+                  <li key={s.name} className="flex flex-wrap items-baseline justify-between gap-x-3">
+                    <span className="font-title text-[1.6rem] leading-tight md:text-[1.85rem]">{s.name}</span>
+                    <span className="font-sans text-[0.8rem] text-dim-ink">{s.usedIn.join(', ')}</span>
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+          ))}
         </div>
       </div>
     </Reel>

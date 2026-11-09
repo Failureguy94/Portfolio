@@ -35,10 +35,6 @@ export const copy = {
     columns: ['Platform', 'Rating', 'Peak', 'Solved', 'Source'],
     viewProfile: 'View profile',
     chartTitle: 'Codeforces rating, contest by contest',
-    live: 'live',
-    snapshot: 'snapshot',
-    checkedAt: 'checked',
-    asOf: 'as of',
   },
 
   cast: {

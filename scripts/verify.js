@@ -92,11 +92,11 @@ for (const width of [360, 390, 768, 1440]) {
   await page.goto(base, { waitUntil: 'networkidle' })
   check('reduced motion: no countdown', (await page.getByRole('dialog').count()) === 0)
   const s = await page.evaluate(() => ({
-    cut: [...document.querySelectorAll('.cut')].every((e) => getComputedStyle(e).opacity === '1'),
+    cut: [...document.querySelectorAll('.rise')].every((e) => getComputedStyle(e).opacity === '1'),
     roll: getComputedStyle(document.querySelector('.credit-roll') ?? document.body).animationName,
     grain: getComputedStyle(document.querySelector('.grain')).animationName,
   }))
-  check('reduced motion: title cards shown', s.cut)
+  check('reduced motion: text shown without waiting', s.cut)
   check('reduced motion: credits do not roll', s.roll === 'none', s.roll)
   check('reduced motion: grain is static', s.grain === 'none', s.grain)
   await ctx.close()

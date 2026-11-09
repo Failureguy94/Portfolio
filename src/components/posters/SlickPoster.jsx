@@ -5,12 +5,14 @@ export function SlickPoster({ id, alt }) {
     <Poster id={id} alt={alt} bg="var(--color-mustard)">
       {/* satellite */}
       <g transform="translate(78 92) rotate(-22)" filter="url(#rough)">
+        <g className="anim bob" style={{ animationDuration: '5s' }}>
         <rect x="-34" y="-7" width="26" height="14" fill="var(--color-paper)" stroke="var(--color-ink)" strokeWidth="3" />
         <rect x="8" y="-7" width="26" height="14" fill="var(--color-paper)" stroke="var(--color-ink)" strokeWidth="3" />
         <rect x="-9" y="-11" width="18" height="22" fill="var(--color-ink)" />
+        </g>
       </g>
       {/* the look-down */}
-      <path d="M88 112 L158 262" stroke="var(--color-ink)" strokeWidth="1.6" strokeDasharray="1 7" strokeLinecap="round" />
+      <path d="M88 112 L158 262" stroke="var(--color-ink)" strokeWidth="1.6" strokeDasharray="1 7" strokeLinecap="round" className="dash-flow" />
       {/* slick */}
       <path
         filter="url(#rough)"
@@ -27,18 +29,31 @@ export function SlickPoster({ id, alt }) {
         fill="none"
         strokeDasharray="2 10"
         strokeLinecap="round"
+        className="dash-flow"
       />
       {[
         [270, 190],
         [292, 156],
         [310, 130],
-      ].map(([x, y]) => (
-        <circle key={x} cx={x} cy={y} r="5" fill="var(--color-paper)" stroke="var(--color-ink)" strokeWidth="2.5" />
+      ].map(([x, y], i) => (
+        <circle
+          key={x}
+          cx={x}
+          cy={y}
+          r="5"
+          fill="var(--color-paper)"
+          stroke="var(--color-ink)"
+          strokeWidth="2.5"
+          className="ping"
+          style={{ '--d': `${i * 0.4}s` }}
+        />
       ))}
       {/* ship */}
       <g transform="translate(330 98) rotate(-8)" filter="url(#rough)">
-        <path d="M-34 0 H34 L24 16 H-26 Z" fill="var(--color-bass)" />
-        <rect x="-12" y="-14" width="20" height="14" fill="var(--color-ink)" />
+        <g className="anim bob">
+          <path d="M-34 0 H34 L24 16 H-26 Z" fill="var(--color-bass)" />
+          <rect x="-12" y="-14" width="20" height="14" fill="var(--color-ink)" />
+        </g>
       </g>
       {/* horizon of sea */}
       <path d="M0 468 H400" stroke="var(--color-ink)" strokeWidth="2" />

@@ -17,6 +17,7 @@
   --font-sans: "Inter", "Inter Fallback", ui-sans-serif, system-ui, sans-serif;
 
   --ease-cut: cubic-bezier(0.7, 0, 0.3, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Anton is self-hosted and preloaded (SIL OFL 1.1) so the hero title never swaps after paint. */
@@ -125,23 +126,110 @@ body {
   color: var(--color-ink);
 }
 
-/* Wipe: the reel is revealed left to right when it first enters view. */
-[data-reveal="pending"] {
-  clip-path: inset(0 100% 0 0);
+/* ---------- smooth text surfacing ---------- */
+/* Blocks rise a little and sharpen out of a soft blur. */
+.rise {
+  opacity: 0;
+  transform: translateY(22px);
+  filter: blur(8px);
+  transition:
+    opacity 900ms var(--ease-out),
+    transform 900ms var(--ease-out),
+    filter 900ms var(--ease-out);
+  transition-delay: var(--d, 0ms);
 }
-[data-reveal="shown"] {
-  clip-path: inset(0 0 0 0);
-  transition: clip-path 750ms var(--ease-cut);
+.rise[data-inview="true"] {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
 }
 
-/* Title-card cut: hold invisible, then appear on a hard cut (zero-length transition). No fades. */
-.cut {
-  opacity: 0;
+/* Headings: each word slides up out of its own mask. */
+.split-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.06em;
+  margin-bottom: -0.06em;
 }
-[data-reveal="shown"] .cut:not([data-shown]),
-.cut[data-shown="true"] {
-  opacity: 1;
-  transition: opacity 0s linear var(--cut-delay, 0ms);
+.split-word > span {
+  display: inline-block;
+  transform: translateY(105%) rotate(4deg);
+  transform-origin: 0 100%;
+  transition: transform 1100ms cubic-bezier(0.19, 1, 0.22, 1);
+  transition-delay: calc(var(--d, 0ms) + var(--i, 0) * 75ms);
+}
+[data-inview="true"] .split-word > span {
+  transform: none;
+}
+
+/* ---------- glass ---------- */
+.glass {
+  background: rgba(240, 230, 208, 0.05);
+  border: 1px solid rgba(240, 230, 208, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(240, 230, 208, 0.1),
+    0 30px 60px -30px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+}
+.glass-paper {
+  background: rgba(240, 230, 208, 0.8);
+  border: 1px solid rgba(18, 17, 16, 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 24px 48px -32px rgba(18, 17, 16, 0.45);
+  backdrop-filter: blur(18px) saturate(130%);
+  -webkit-backdrop-filter: blur(18px) saturate(130%);
+}
+
+/* Soft colour fields that drift behind glass panels. */
+.blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(70px);
+  pointer-events: none;
+  animation: drift 18s ease-in-out infinite alternate;
+}
+.drift {
+  animation: drift 22s ease-in-out infinite alternate;
+}
+@keyframes drift {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(6vw, -4vh) scale(1.12);
+  }
+  100% {
+    transform: translate(-4vw, 5vh) scale(0.94);
+  }
+}
+
+/* ---------- film strip marquee ---------- */
+.film-strip {
+  --hole: rgba(240, 230, 208, 0.16);
+  background-color: #0b0a09;
+  background-image:
+    linear-gradient(90deg, var(--hole) 0 14px, transparent 14px 30px),
+    linear-gradient(90deg, var(--hole) 0 14px, transparent 14px 30px);
+  background-size: 30px 8px, 30px 8px;
+  background-position: 0 8px, 0 calc(100% - 8px);
+  background-repeat: repeat-x;
+}
+.marquee-track {
+  animation: marquee var(--speed, 40s) linear infinite;
+}
+.marquee-track[data-reverse="true"] {
+  animation-direction: reverse;
+}
+.film-strip:hover .marquee-track {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 /* ---------- film grain ---------- */
@@ -172,6 +260,119 @@ body {
   }
   to {
     transform: scale(1.06);
+  }
+}
+/* pointer parallax: --mx / --my run from -1 to 1 */
+.parallax {
+  transform: translate3d(calc(var(--mx, 0) * var(--depth) * 1px), calc(var(--my, 0) * var(--depth) * 1px), 0);
+  transition: transform 600ms var(--ease-out);
+}
+.float {
+  animation: float 6s ease-in-out infinite alternate;
+}
+@keyframes float {
+  to {
+    translate: 0 -10px;
+    rotate: -2deg;
+  }
+}
+
+/* ---------- posters ---------- */
+.tilt {
+  transform: perspective(900px) rotateX(calc(var(--ty, 0) * -7deg)) rotateY(calc(var(--tx, 0) * 9deg)) rotate(var(--rest, 0deg));
+  transition: transform 500ms var(--ease-out);
+  will-change: transform;
+}
+.tilt-sheen {
+  background: radial-gradient(
+    circle at calc(50% + var(--tx, 0) * 50%) calc(50% + var(--ty, 0) * 50%),
+    rgba(255, 255, 255, 0.28),
+    transparent 55%
+  );
+  opacity: var(--sheen, 0);
+  transition: opacity 400ms;
+  mix-blend-mode: soft-light;
+}
+.anim {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.bob {
+  animation: bob 3.2s ease-in-out infinite alternate;
+}
+@keyframes bob {
+  from {
+    transform: translateY(-3px) rotate(-3deg);
+  }
+  to {
+    transform: translateY(3px) rotate(3deg);
+  }
+}
+.ping {
+  animation: ping 2.4s ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
+@keyframes ping {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+.spin-slow {
+  animation: spin 22s linear infinite;
+}
+.spin-med {
+  animation: spin 9s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.sway {
+  animation: sway 3.6s ease-in-out infinite alternate;
+  animation-delay: var(--d, 0s);
+  transform-origin: 50% 50%;
+}
+@keyframes sway {
+  from {
+    transform: rotate(-2.5deg);
+  }
+  to {
+    transform: rotate(2.5deg);
+  }
+}
+.scan {
+  animation: scan 7s ease-in-out infinite alternate;
+}
+@keyframes scan {
+  from {
+    transform: translateX(-190px);
+  }
+  to {
+    transform: translateX(80px);
+  }
+}
+.sweep-lens {
+  animation: sweep-lens 6s ease-in-out infinite alternate;
+}
+@keyframes sweep-lens {
+  from {
+    transform: translate(-14px, 8px);
+  }
+  to {
+    transform: translate(10px, -10px);
+  }
+}
+.dash-flow {
+  animation: dash-flow 1.6s linear infinite;
+}
+@keyframes dash-flow {
+  to {
+    stroke-dashoffset: -24;
   }
 }
 
@@ -215,12 +416,16 @@ body {
 
 /* ---------- credit roll ---------- */
 .credit-roll {
-  animation: roll-up var(--roll-duration, 38s) linear infinite;
+  animation: roll-up var(--roll-duration, 34s) linear infinite;
 }
 .credit-window:hover .credit-roll,
 .credit-window:focus-within .credit-roll,
 .credit-window:focus .credit-roll {
   animation-play-state: paused;
+}
+.credit-window {
+  mask-image: linear-gradient(transparent, #000 18%, #000 82%, transparent);
+  -webkit-mask-image: linear-gradient(transparent, #000 18%, #000 82%, transparent);
 }
 @keyframes roll-up {
   from {
@@ -238,23 +443,37 @@ body {
   }
   .grain,
   .push-in,
-  .leader-sweep {
-    animation: none;
-  }
-  [data-reveal="pending"] {
-    clip-path: none;
-  }
-  [data-reveal] {
-    transition: none;
-  }
-  .cut {
-    opacity: 1;
-    transition: none !important;
-  }
-  .roll-col {
-    transition: none;
-  }
+  .leader-sweep,
+  .blob,
+  .drift,
+  .float,
+  .bob,
+  .ping,
+  .spin-slow,
+  .spin-med,
+  .sway,
+  .scan,
+  .sweep-lens,
+  .dash-flow,
+  .marquee-track,
   .credit-roll {
     animation: none;
+  }
+  .rise,
+  .split-word > span {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+  .roll-col,
+  .parallax,
+  .tilt {
+    transition: none;
+    transform: none;
+  }
+  .credit-window {
+    mask-image: none;
+    -webkit-mask-image: none;
   }
 }
