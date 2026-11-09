@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import { BloodReveal } from '../components/BloodReveal'
 import { copy } from '../data/copy'
 import { heroCaption, profile } from '../data/profile'
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
@@ -31,9 +32,10 @@ function Disc({ className, still }) {
   )
 }
 
-export function ColdOpen() {
+export function ColdOpen({ ready = true }) {
   const still = usePrefersReducedMotion()
   const frameRef = useRef(null)
+  const nameRef = useRef(null)
   const raf = useRef(0)
 
   function onMove(e) {
@@ -58,11 +60,13 @@ export function ColdOpen() {
       {/* top letterbox: the nav sits in it */}
       <div className="h-[calc(56px+2vh)] shrink-0 bg-ink" aria-hidden="true" />
 
-      <div ref={frameRef} onPointerMove={onMove} className="relative flex-1 overflow-hidden bg-paper text-ink">
+      <div ref={frameRef} onPointerMove={onMove} className="relative flex-1 touch-pan-y overflow-hidden bg-paper text-ink">
         <div className="push-in absolute inset-0">
           <div className="parallax absolute left-[-14vw] top-[-6%] md:left-[6vw] md:top-[-12%]" style={{ '--depth': -26 }}>
             <Disc still={still} className="h-[min(70vh,112vw)] w-[min(70vh,112vw)] md:h-[min(80vh,46vw)] md:w-[min(80vh,46vw)]" />
           </div>
+          {/* hidden artwork: above the disc, below the name and buttons */}
+          <BloodReveal hostRef={frameRef} nameRef={nameRef} ready={ready} />
           <div className="parallax absolute right-[7vw] top-[12%]" style={{ '--depth': 34 }}>
             <span aria-hidden="true" className="float block h-[9px] w-[22vw] -rotate-6 bg-mustard md:h-3 md:w-[14vw]" />
           </div>
@@ -70,6 +74,7 @@ export function ColdOpen() {
             {copy.hero.kicker}
           </p>
           <h1
+            ref={nameRef}
             id="hero-title"
             className="font-title parallax absolute bottom-[26%] left-[4vw] whitespace-nowrap text-[29vw] md:bottom-[24%] md:text-[13.9vw]"
             style={{ '--depth': 10 }}

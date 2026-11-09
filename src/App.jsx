@@ -34,7 +34,7 @@ export default function App() {
       <RoughFilter />
       <Nav />
       <main id="main">
-        <ColdOpen />
+        <ColdOpen ready={!leader} />
         <OpeningCredits />
         <FilmStrip items={projectTitles} speed={36} />
         <Suspense fallback={<div className="min-h-[200vh] bg-paper" aria-hidden="true" />}>
