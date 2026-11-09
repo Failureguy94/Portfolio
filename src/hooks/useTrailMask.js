@@ -3,15 +3,15 @@ import { ART } from '../lib/bloodArt.js'
 
 // ---------- tuning ----------
 /** Brush radius in px at a 1440px-wide hero. Scales with the hero width, clamped below. */
-export const BRUSH_RADIUS = 90
-export const BRUSH_MIN = 60
-export const BRUSH_MAX = 110
+export const BRUSH_RADIUS = 140
+export const BRUSH_MIN = 90
+export const BRUSH_MAX = 170
 /** ± variation of each stamp's radius and opacity, so the edge feels organic. */
 export const BRUSH_JITTER = 0.12
 /** Fast strokes lay stamps up to this much larger (0.35 = +35%). */
 export const SPEED_BOOST = 0.35
 /** A stamp has fully faded this long after it was laid (ms). */
-export const FADE_MS = 1600
+export const FADE_MS = 4000
 /** The strongest the artwork is ever shown (0–1). */
 export const MAX_OPACITY = 0.9
 /** prefers-reduced-motion: the artwork sits still at this opacity instead. */

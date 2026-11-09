@@ -36,23 +36,22 @@ function loadArt() {
 }
 
 /**
- * Where the artwork sits in the hero, in the coordinates of the name's container:
- * pool behind the first half of the first name line, slide up and to the right.
- * Scales with the name, but shrinks to keep the slide inside the hero on narrow screens.
+ * Where the artwork sits in the hero, in the coordinates of the name's container. The art is drawn
+ * against the hero name at a 1900px-wide hero, so it is anchored to the name's first line and scaled
+ * with it. On narrow or short heroes it shrinks so the slide and the figure stay inside; the pool may
+ * bleed off the left edge.
  */
 function artRect(host, name) {
   if (!host || !name?.firstElementChild) return null
-  const first = name.firstElementChild
   const W = host.clientWidth
   const lineH = parseFloat(getComputedStyle(name).fontSize) * 0.86
-  const nameX = name.offsetLeft + first.offsetLeft
-  const poolX = nameX + first.offsetWidth * 0.42
-  const poolY = name.offsetTop + lineH * 0.42
+  const nameX = name.offsetLeft + name.firstElementChild.offsetLeft
+  const nameTop = name.offsetTop
 
   let s = lineH / ART.refLineHeight
-  s = Math.min(s, (W - EDGE * 2) / (ART.maxX - ART.minX), (poolY - EDGE) / (ART.poolCy - ART.minY))
-  let x = poolX - ART.poolCx * s
-  const y = poolY - ART.poolCy * s
+  s = Math.min(s, (W - EDGE * 2) / (ART.maxX - ART.fitMinX), (nameTop - EDGE) / (ART.nameTop - ART.minY))
+  let x = nameX - ART.nameX * s
+  const y = nameTop - ART.nameTop * s
   const right = x + ART.maxX * s
   if (right > W - EDGE) x -= right - (W - EDGE)
   return { x, y, w: ART.width * s, h: ART.height * s }

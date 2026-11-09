@@ -57,19 +57,19 @@ Results are cached for five minutes per tab.
 | `node scripts/screenshots.js [url] [dir]` | Screenshots every section at 390, 768 and 1440 px |
 | `node scripts/verify.js [url]` | Checks horizontal scroll, the countdown and Skip credits by keyboard, link `rel`, external links, the resume, OG tags, the blood artwork file and its `aria-hidden` layer, no TODO strings, and reduced-motion behaviour |
 | `npm run art` | Re-renders the hidden hero artwork (see below) |
-| `node scripts/check-reveal.js [url] [dir]` | Screenshots the hero reveal mid-trail and 2.5 s later at 390, 768 and 1440 px; checks the loop stops when idle, long tasks, CLS, the sweep and reduced motion |
+| `node scripts/check-reveal.js [url] [dir]` | Screenshots the hero reveal mid-trail and 4.5 s later at 390, 768 and 1440 px; checks the loop stops when idle, long tasks, CLS, the sweep and reduced motion |
 
 The Playwright scripts need a browser once: `npx playwright install chromium`.
 
 ## Hidden hero artwork (blood reveal)
 
-A blood stain and a microscope slide are hidden behind the hero name. Moving the pointer (or dragging a finger sideways) wipes them into view along a soft trail that fades out again. On the first visit of a session, one short automatic sweep shows the effect after the intro.
+A blood pool and a black silhouetted figure holding a microscope slide are hidden behind the hero name. Moving the pointer (or dragging a finger sideways) wipes them into view along a soft trail that fades out again. On the first visit of a session, one short automatic sweep shows the effect after the intro.
 
-- **Source:** `art/blood-slide.svg`, an editable SVG (edge roughness, clots, rim shadow and gloss are SVG filters, commented in the file). The slide label's text is filled from `src/data/profile.js` at render time, so it never needs editing by hand. Geometry the hero relies on (pool centre and radius, slide centre, visible extent) is in `src/lib/bloodArt.js`; update it if you move things in the SVG.
-- **Regenerate:** `npm run art` renders `public/art/blood-slide.webp` (transparent, 2400×1440, about 155 KB) and a PNG fallback with Playwright. It also prints the contrast of the black name over the pool and warns if it drops below 3:1 or if the WebP exceeds 250 KB. `--preview out.png` saves the art over the hero paper colour.
+- **Source:** `art/blood-slide.svg`, an editable SVG with the slide and the figure (an original silhouette with no facial detail, fading out above the name). The pool is `art/blood-pool.png`, lifted from the draft mock-up with `python3 scripts/extract-blood-pool.py <draft.png> art/blood-pool.png` (needs `opencv-python` and `numpy`). The slide label's text is filled from `src/data/profile.js` at render time, so it never needs editing by hand. Geometry the hero relies on (pool centre and radius, slide centre, visible extent) is in `src/lib/bloodArt.js`; update it if you move things in the SVG.
+- **Regenerate:** `npm run art` renders `public/art/blood-slide.webp` (transparent, 2960×1520, about 140 KB) and a PNG fallback with Playwright. It also prints the contrast of the black name over the pool (the draft's deep red gives about 2.3–2.6:1, below the 3:1 large-text guideline, while the trail is showing) and warns if the WebP exceeds 250 KB. `--preview out.png` saves the art over the hero paper colour.
 - **Tune the trail:** constants at the top of `src/hooks/useTrailMask.js`:
-  - `BRUSH_RADIUS` (90 px at a 1440 px hero; scales with width, clamped by `BRUSH_MIN`/`BRUSH_MAX`), `BRUSH_JITTER`, `SPEED_BOOST`
-  - `FADE_MS`: how long a stamp takes to disappear completely (1600 ms)
+  - `BRUSH_RADIUS` (140 px at a 1440 px hero; scales with width, clamped by `BRUSH_MIN`/`BRUSH_MAX`, 90–170), `BRUSH_JITTER`, `SPEED_BOOST`
+  - `FADE_MS`: how long a stamp takes to disappear completely (4000 ms)
   - `MAX_OPACITY` (0.9): the art's strongest opacity. Lowering it also lightens the pool behind the name
   - `STATIC_OPACITY` (0.12): the still art shown under reduced motion
   - `SWEEP_MS`: length of the discovery sweep

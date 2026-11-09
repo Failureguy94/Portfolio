@@ -1,4 +1,4 @@
-// Checks the hero blood reveal: trail screenshots, idle loop, long tasks, CLS, reduced motion, sweep.
+// Checks the hero blood reveal: trail screenshots (mid-trail, 4.5 s later), idle loop, long tasks, CLS, reduced motion, sweep.
 // Usage: node scripts/check-reveal.js [baseUrl] [outDir]
 import { mkdirSync } from 'node:fs'
 import { chromium } from 'playwright'
@@ -75,8 +75,8 @@ for (const width of [390, 768, 1440]) {
   const longDuringMove = await page.evaluate(() => window.__long.filter((d) => d > 50))
   check(`${width}: no long tasks over 50ms while moving`, longDuringMove.length === 0, longDuringMove.join(', '))
 
-  await page.waitForTimeout(2500)
-  await page.screenshot({ path: `${out}/${width}-b-after-2500ms.png` })
+  await page.waitForTimeout(4500)
+  await page.screenshot({ path: `${out}/${width}-b-after-4500ms.png` })
   const state = await page.evaluate(() => {
     const c = document.querySelector('[data-blood-reveal]')
     const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data
@@ -84,7 +84,7 @@ for (const width of [390, 768, 1440]) {
     for (let i = 3; i < d.length; i += 4) max = Math.max(max, d[i])
     return { running: c.dataset.running, maxAlpha: max, hidden: c.getAttribute('aria-hidden'), pe: getComputedStyle(c).pointerEvents }
   })
-  check(`${width}: fully hidden 2.5s after the pointer stops`, state.maxAlpha === 0, `max alpha ${state.maxAlpha}`)
+  check(`${width}: fully hidden 4.5s after the pointer stops`, state.maxAlpha === 0, `max alpha ${state.maxAlpha}`)
   check(`${width}: loop stopped when idle`, state.running === 'false')
   const rafIdle = await page.evaluate(async () => {
     const before = window.__raf
@@ -115,7 +115,7 @@ for (const width of [390, 768, 1440]) {
   await page.waitForTimeout(800)
   await page.screenshot({ path: `${out}/1440-sweep.png` })
   check('sweep plays on first visit', true)
-  await page.waitForTimeout(3200)
+  await page.waitForTimeout(5000)
   await page.reload({ waitUntil: 'networkidle' })
   await page.waitForTimeout(2500)
   const raf = await page.evaluate(() => window.__raf)

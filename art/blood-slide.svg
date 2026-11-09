@@ -1,62 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Blood-slide artwork for the hero reveal. Transparent layer: pool, splatter, slide. No text of the page, no background.
+  Blood-slide artwork for the hero reveal. Transparent layer: blood pool, a silhouetted figure holding a
+  microscope slide. No page text, no background.
   Render with `npm run art` (scripts/make-blood-art.js) to public/art/blood-slide.{webp,png}.
 
   Editing notes
-  - viewBox units = CSS px at a 1900px-wide hero. Pool centre (300,420), radius ~200. Keep src/lib/bloodArt.js in sync if you move things.
+  - viewBox units = CSS px at a 1900px-wide hero. The hero name's first line starts at (56, 368).
+    Keep src/lib/bloodArt.js in sync if you move things.
+  - The pool is a bitmap (blood-pool.png), lifted from the draft mock-up by scripts/extract-blood-pool.py.
   - Double-brace tokens in the label are filled from src/data/profile.js by the render script. Do not type names in here.
-  - Pool colours: #pool-fill stops. They are lighter than a "true" blood red on purpose, so the black
-    hero name keeps at least 3:1 contrast over the pool (the render script measures this).
-  - Edge roughness: #pool-filter feDisplacementMap scale. Clots: the second feTurbulence.
+  - The figure is an original solid-black silhouette with no facial detail. It fades out above the
+    hero name (#figure-fade) so it never sits behind the black headline.
 -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" width="1200" height="720">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1480 760" width="1480" height="760">
   <defs>
-    <!-- ============ pool ============ -->
-    <radialGradient id="pool-fill" cx="0.47" cy="0.5" r="0.56">
-      <stop offset="0" stop-color="#A9474D"/>
-      <stop offset="0.55" stop-color="#AC4A50"/>
-      <stop offset="1" stop-color="#B9575C"/>
-    </radialGradient>
-
-    <filter id="pool-filter" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
-      <!-- soft, irregular edge -->
-      <feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="3" seed="11" result="edgeNoise"/>
-      <feDisplacementMap in="SourceGraphic" in2="edgeNoise" scale="38" xChannelSelector="R" yChannelSelector="G" result="shape"/>
-      <feGaussianBlur in="shape" stdDeviation="0.8" result="shapeSoft"/>
-
-      <!-- clotted interior: turbulence alpha, kept away from the rim -->
-      <feTurbulence type="fractalNoise" baseFrequency="0.022" numOctaves="3" seed="3" result="clotNoise"/>
-      <feColorMatrix in="clotNoise" type="matrix"
-        values="0 0 0 0 0.56
-                0 0 0 0 0.2
-                0 0 0 0 0.22
-                1.5 0 0 0 -0.68" result="clotTone"/>
-      <feMorphology in="shapeSoft" operator="erode" radius="22" result="inner"/>
-      <feGaussianBlur in="inner" stdDeviation="14" result="innerSoft"/>
-      <feComposite in="clotTone" in2="innerSoft" operator="in" result="clot"/>
-
-      <!-- very faint inner rim shadow -->
-      <feGaussianBlur in="shapeSoft" stdDeviation="7" result="rimBlur"/>
-      <feComposite in="shapeSoft" in2="rimBlur" operator="arithmetic" k1="0" k2="1" k3="-1" k4="0" result="rimMask"/>
-      <feFlood flood-color="#6E2328" flood-opacity="0.32"/>
-      <feComposite in2="rimMask" operator="in" result="rim"/>
-
-      <feMerge>
-        <feMergeNode in="shapeSoft"/>
-        <feMergeNode in="clot"/>
-        <feMergeNode in="rim"/>
-      </feMerge>
-    </filter>
-
-    <filter id="gloss" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="16"/>
-    </filter>
-
-    <filter id="drop-edge" x="-20%" y="-20%" width="140%" height="140%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="2" seed="5" result="n"/>
-      <feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G"/>
-    </filter>
+    <!-- ============ figure ============ -->
+    <linearGradient id="figure-fade-grad" gradientUnits="userSpaceOnUse" x1="0" y1="300" x2="0" y2="366">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset="1" stop-color="#000"/>
+    </linearGradient>
+    <mask id="figure-fade" maskUnits="userSpaceOnUse" x="0" y="0" width="1480" height="760">
+      <rect width="1480" height="760" fill="url(#figure-fade-grad)"/>
+    </mask>
 
     <!-- ============ slide ============ -->
     <linearGradient id="glass-body" x1="0" y1="0" x2="1" y2="1">
@@ -106,27 +71,19 @@
     </clipPath>
   </defs>
 
-  <!-- ============ splatter: four tiny droplets ============ -->
-  <g id="splatter" fill="#AE4C52">
-    <circle cx="96" cy="262" r="5"/>
-    <ellipse cx="74" cy="560" rx="4" ry="3.2" transform="rotate(-30 74 560)"/>
-    <circle cx="556" cy="560" r="2.6"/>
-    <circle cx="520" cy="402" r="3.4"/>
+  <!-- ============ pool (from the draft) ============ -->
+  <image id="pool" href="blood-pool.png" x="48" y="67" width="773" height="665"/>
+
+  <!-- ============ figure, behind the slide: head and the hand's fingers ============ -->
+  <g id="figure" fill="#000" mask="url(#figure-fade)">
+    <g transform="translate(268 93) scale(0.8)">
+      <path id="head" d="M1300 40C1340 38 1378 58 1395 95C1412 135 1410 190 1392 228C1380 255 1365 272 1358 300L1356 350C1390 362 1440 372 1470 400L1480 470L1150 470C1165 430 1200 395 1250 352L1246 305C1236 296 1222 290 1214 284C1204 280 1197 272 1196 263C1195 255 1199 250 1200 246C1196 241 1192 238 1193 233C1194 229 1198 227 1198 225C1195 222 1191 220 1192 216C1193 212 1197 209 1197 206C1190 204 1180 200 1177 195C1176 190 1180 184 1186 172C1192 160 1197 154 1197 150C1194 146 1192 142 1194 138C1198 124 1200 112 1203 100C1208 80 1220 62 1240 52C1258 44 1280 40 1300 40Z"/>
+      <path id="hand" transform="translate(-25 0)" d="M1112 345C1104 318 1096 296 1090 272C1082 252 1066 232 1052 212C1040 196 1034 178 1038 160C1041 144 1050 128 1062 118C1072 110 1084 112 1090 122C1100 140 1112 158 1126 172C1140 188 1156 205 1164 228C1172 256 1174 290 1168 318L1178 470L1118 470Z"/>
+    </g>
   </g>
 
-  <!-- ============ pool ============ -->
-  <g id="pool">
-    <path filter="url(#pool-filter)" fill="url(#pool-fill)"
-      d="M502.5 482.7C488.9 520.7 464.8 534.9 433.9 564.5C403.0 594.1 385.8 623.6 347.9 630.6C310.0 637.6 284.1 613.9 244.4 599.6C204.8 585.3 174.2 587.1 149.6 559.3C125.0 531.5 132.4 501.1 121.6 460.6C110.7 420.1 87.2 394.4 95.6 356.8C103.9 319.2 130.9 297.0 163.4 272.5C195.9 248.1 218.2 245.2 257.9 234.7C297.5 224.3 324.6 209.9 361.8 220.3C398.9 230.7 415.8 256.0 443.8 286.8C471.8 317.6 490.1 334.9 501.8 374.1C513.6 413.3 516.1 444.6 502.5 482.7Z"/>
-    <!-- one short drip (about 45px) -->
-    <path filter="url(#drop-edge)" fill="#B3525A"
-      d="M318 616C324 616 327 622 326.5 632L325 652C324.6 658 322 662 318.5 662C315 662 312.4 658 312 652L310.5 632C310 622 312 616 318 616Z"/>
-    <!-- single soft gloss -->
-    <ellipse filter="url(#gloss)" cx="236" cy="330" rx="78" ry="34" transform="rotate(-28 236 330)" fill="#fff" opacity="0.12"/>
-  </g>
-
-  <!-- ============ slide (85% of the previous size, tilted) ============ -->
-  <g id="slide" transform="translate(792 258) rotate(-3.5)">
+  <!-- ============ slide, held at its right end ============ -->
+  <g id="slide" transform="translate(901 235) rotate(-6) scale(0.7)">
     <!-- soft drop shadow -->
     <rect x="-292" y="-92" width="595" height="205" rx="9" fill="#3B1F18" opacity="0.2" filter="url(#soft-shadow)" transform="translate(6 10)"/>
 
@@ -171,5 +128,10 @@
         <text x="-280" y="69" font-size="11" letter-spacing="0.5" fill="#8A0A15">{{status2}}</text>
       </g>
     </g>
+  </g>
+
+  <!-- ============ figure, in front of the slide: the thumb ============ -->
+  <g fill="#000" mask="url(#figure-fade)">
+    <path id="thumb" transform="translate(268 93) scale(0.8) translate(-25 0)" d="M1098 268C1086 248 1070 222 1060 200C1054 188 1054 176 1062 172C1072 168 1080 176 1086 186C1098 206 1112 228 1124 250Z"/>
   </g>
 </svg>

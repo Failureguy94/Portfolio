@@ -29,6 +29,10 @@ if (!vb || +vb[1] !== ART.width || +vb[2] !== ART.height) {
   throw new Error('art/blood-slide.svg viewBox does not match ART in src/lib/bloodArt.js')
 }
 
+// the pool bitmap is referenced relatively in the SVG; inline it for rendering
+const pool = readFileSync(path.join(root, 'art/blood-pool.png')).toString('base64')
+svg = svg.replace('href="blood-pool.png"', `href="data:image/png;base64,${pool}"`)
+
 const font = readFileSync(
   path.join(root, 'node_modules/@fontsource/special-elite/files/special-elite-latin-400-normal.woff2'),
 ).toString('base64')
@@ -115,4 +119,4 @@ console.log(
   `name-over-pool contrast at ${MAX_OPACITY} opacity: min ${result.min.toFixed(2)}, 5th pct ${result.p5.toFixed(2)}, median ${result.median.toFixed(2)} (target ≥ 3:1 for the headline)`,
 )
 if (statSync(webpPath).size > WEBP_BUDGET) console.warn(`warning: WebP is over the ${WEBP_BUDGET / 1024} KB budget`)
-if (result.p5 < 3) console.warn('warning: pool is too dark for the black name; lighten #pool-fill')
+if (result.p5 < 3) console.warn('note: the black name is below 3:1 over most of the pool (lower MAX_OPACITY or lighten blood-pool.png to raise it)')

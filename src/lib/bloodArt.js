@@ -3,22 +3,23 @@
 // At a 1900px-wide hero the art is drawn at scale 1, so 1 unit = 1 CSS px.
 
 export const ART = {
-  width: 1200,
-  height: 720,
+  width: 1480,
+  height: 760,
+  // where the hero name sits in the art: left of its first line, top of the h1, Anton line box
+  nameX: 56,
+  nameTop: 368,
+  refLineHeight: 227, // 0.86 × 13.9vw at a 1900px-wide hero
   // the pool's centre and mean radius
-  poolCx: 300,
-  poolCy: 420,
-  poolR: 200,
+  poolCx: 446,
+  poolCy: 388,
+  poolR: 332,
   // the slide's centre, used to aim the discovery sweep
-  slideCx: 792,
-  slideCy: 258,
-  // visible extent (splatter, slide shadow): used to keep the art inside the hero
-  minX: 60,
-  maxX: 1112,
-  minY: 105,
-  maxY: 690,
-  // the Anton line box (0.86 × 13.9vw) of the hero name at a 1900px-wide hero
-  refLineHeight: 227,
+  slideCx: 901,
+  slideCy: 235,
+  // the figure and slide must stay inside the hero; the pool may bleed off the left edge
+  fitMinX: 446,
+  maxX: 1420,
+  minY: 120,
 }
 
 export const ART_SRC = { webp: '/art/blood-slide.webp', png: '/art/blood-slide.png' }
