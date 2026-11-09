@@ -22,7 +22,7 @@ You should not need to touch components. Edit these files:
 | `src/data/profile.js` | Name, hero caption, opening credits, nav, end-credits roll, email, GitHub, LinkedIn, resume path, availability line |
 | `src/data/projects.js` | Projects in display order: title, tagline, synopsis, "cast" (stack), repo and live links, poster choice and poster alt text |
 | `src/data/skills.js` | Cast & crew groups. Only list a skill if a project on the page used it |
-| `src/data/cp.json` | Handles, profile URLs, and the static fallback numbers shown when a live fetch fails. Update `lastUpdated` when you edit it |
+| `src/data/cp.json` | Handles, profile URLs, and the static fallback numbers and contest histories shown when a live fetch fails. Update `lastUpdated` when you edit it |
 | `src/data/copy.js` | Headings, button labels, small interface copy |
 | `src/data/metadata.js` | Page title, description, Open Graph text, site URL |
 | `public/resume.pdf` | The resume behind every Resume link |
@@ -38,6 +38,8 @@ Conventions:
 - **Codeforces:** fetched in the browser from the public API (`user.info`, `user.rating`). The current rank label is only shown when it comes from the live API, never from the snapshot.
 - **LeetCode:** `/api/leetcode` (a Vercel function) queries LeetCode's GraphQL endpoint. The fallback shows `cp.json`'s `solved` with a `+`.
 - **CodeChef:** `/api/codechef` reads a stats service if `CODECHEF_API_KEY` is set, otherwise the public profile page.
+
+The contest chart puts all three platforms on one time axis: Codeforces from `user.rating`, CodeChef from the rating history embedded in the public profile page (read by `/api/codechef`), and LeetCode from `userContestRankingHistory` (read by `/api/leetcode`). When a live fetch fails, the chart uses the `history` arrays in `cp.json` (`{ t, rating, name }`, `t` in Unix seconds).
 
 Results are cached for five minutes per tab. 
 

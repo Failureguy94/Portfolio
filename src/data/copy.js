@@ -34,7 +34,7 @@ export const copy = {
     intro: 'Every figure links to the profile it came from.',
     columns: ['Platform', 'Rating', 'Peak', 'Solved', 'Source'],
     viewProfile: 'View profile',
-    chartTitle: 'Codeforces rating, contest by contest',
+    chartTitle: 'Contest rating, contest by contest',
   },
 
   cast: {

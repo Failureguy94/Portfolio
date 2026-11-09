@@ -12,6 +12,13 @@ import { useLeetCode } from '../hooks/useLeetCode'
 
 const t = copy.numbers
 
+// colours validated for colour-blind separation on the dark glass panel; shape is a second cue
+const CHART_SERIES = {
+  codeforces: { name: 'Codeforces', color: '#1f9cc4', shape: 'circle' },
+  codechef: { name: 'CodeChef', color: '#c08a1a', shape: 'square' },
+  leetcode: { name: 'LeetCode', color: '#d9468a', shape: 'diamond' },
+}
+
 const capitalise = (s) => (s ? s.replace(/\b\w/g, (c) => c.toUpperCase()) : null)
 
 export default function BoxOffice() {
@@ -47,6 +54,16 @@ export default function BoxOffice() {
       solvedSuffix: lcFloor ? '+' : '',
       url: cp.leetcode.profileUrl,
     },
+  ]
+
+  const series = [
+    {
+      id: 'codeforces',
+      ...CHART_SERIES.codeforces,
+      points: (cf.data.history ?? []).map((h) => ({ t: h.ratingUpdateTimeSeconds, rating: h.newRating, name: h.contestName })),
+    },
+    { id: 'codechef', ...CHART_SERIES.codechef, points: cc.data.history ?? [] },
+    { id: 'leetcode', ...CHART_SERIES.leetcode, points: lc.data.history ?? [] },
   ]
 
   const big = 'font-title text-[clamp(1.9rem,3.6vw,3rem)] tabular-nums'
@@ -146,7 +163,7 @@ export default function BoxOffice() {
           </Reveal>
 
           <Reveal delay={150} className="glass rounded-2xl p-5 md:p-8 lg:col-span-5">
-            <RatingChart history={cf.data.history} title={t.chartTitle} />
+            <RatingChart series={series} title={t.chartTitle} />
           </Reveal>
         </div>
       </div>

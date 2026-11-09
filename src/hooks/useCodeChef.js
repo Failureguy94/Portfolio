@@ -7,6 +7,7 @@ const fallback = {
   rating: cp.codechef.rating,
   maxRating: cp.codechef.maxRating,
   solved: null,
+  history: cp.codechef.history,
 }
 
 async function load(signal) {
@@ -19,9 +20,10 @@ async function load(signal) {
     rating: json.rating,
     maxRating: json.maxRating ?? json.rating,
     solved: json.totalSolved ?? null,
+    history: json.history?.length ? json.history : cp.codechef.history,
   }
 }
 
 export function useCodeChef() {
-  return useLiveStat('portfolio_cc_v2', fallback, load)
+  return useLiveStat('portfolio_cc_v3', fallback, load)
 }

@@ -187,12 +187,226 @@
     "profileUrl": "https://www.codechef.com/users/sarthak14313",
     "stars": 3,
     "rating": 1636,
-    "maxRating": 1636
+    "maxRating": 1636,
+    "history": [
+      {
+        "t": 1726072206,
+        "rating": 677,
+        "name": "Starters 151 (rated)"
+      },
+      {
+        "t": 1727281806,
+        "rating": 702,
+        "name": "Starters 153 (Rated)"
+      },
+      {
+        "t": 1727886606,
+        "rating": 785,
+        "name": "Starters 154 (Rated)"
+      },
+      {
+        "t": 1728491404,
+        "rating": 891,
+        "name": "Starters 155 (Rated)"
+      },
+      {
+        "t": 1729096206,
+        "rating": 905,
+        "name": "Starters 156 (Rated)"
+      },
+      {
+        "t": 1729701006,
+        "rating": 959,
+        "name": "Starters 157 (Rated)"
+      },
+      {
+        "t": 1730305806,
+        "rating": 960,
+        "name": "Starters 158 (Rated)"
+      },
+      {
+        "t": 1730910606,
+        "rating": 993,
+        "name": "Starters 159 (Rated)"
+      },
+      {
+        "t": 1731517206,
+        "rating": 1014,
+        "name": "Starters 160 (Rated)"
+      },
+      {
+        "t": 1732122006,
+        "rating": 1058,
+        "name": "Starters 161 (Rated)"
+      },
+      {
+        "t": 1732725006,
+        "rating": 1057,
+        "name": "Starters 162 (Rated)"
+      },
+      {
+        "t": 1733329806,
+        "rating": 1104,
+        "name": "Starters 163 (Rated)"
+      },
+      {
+        "t": 1733934606,
+        "rating": 1143,
+        "name": "Starters 164 (Rated)"
+      },
+      {
+        "t": 1734539406,
+        "rating": 1195,
+        "name": "Starters 165 (Rated)"
+      },
+      {
+        "t": 1735144206,
+        "rating": 1222,
+        "name": "Starters 166 (Rated)"
+      },
+      {
+        "t": 1736355606,
+        "rating": 1265,
+        "name": "Starters 168 (Rated)"
+      },
+      {
+        "t": 1736958606,
+        "rating": 1288,
+        "name": "Starters 169 (Rated)"
+      },
+      {
+        "t": 1737563406,
+        "rating": 1315,
+        "name": "Starters 170 (Rated)"
+      },
+      {
+        "t": 1738168206,
+        "rating": 1322,
+        "name": "Starters 171 (Rated)"
+      },
+      {
+        "t": 1739379606,
+        "rating": 1362,
+        "name": "Starters 173 (Rated upto < 2700)"
+      },
+      {
+        "t": 1740587406,
+        "rating": 1395,
+        "name": "Starters 175 (Rated)"
+      },
+      {
+        "t": 1741192206,
+        "rating": 1373,
+        "name": "Starters 176 (Rated)"
+      },
+      {
+        "t": 1741797006,
+        "rating": 1390,
+        "name": "Starters 177 (Rated)"
+      },
+      {
+        "t": 1742402706,
+        "rating": 1392,
+        "name": "Starters 178 (Rated)"
+      },
+      {
+        "t": 1743611406,
+        "rating": 1375,
+        "name": "Starters 180 (Rated)"
+      },
+      {
+        "t": 1744821006,
+        "rating": 1368,
+        "name": "Starters 182 (Rated)"
+      },
+      {
+        "t": 1745425806,
+        "rating": 1386,
+        "name": "Starters 183 (Rated)"
+      },
+      {
+        "t": 1746030606,
+        "rating": 1415,
+        "name": "Starters 184 (Rated)"
+      },
+      {
+        "t": 1748449804,
+        "rating": 1439,
+        "name": "Starters 188 (Rated)"
+      },
+      {
+        "t": 1749054604,
+        "rating": 1462,
+        "name": "Starters 189 (Rated)"
+      },
+      {
+        "t": 1749659404,
+        "rating": 1504,
+        "name": "Starters 190 (Rated)"
+      },
+      {
+        "t": 1750264204,
+        "rating": 1496,
+        "name": "Starters 191 (Rated)"
+      },
+      {
+        "t": 1751475604,
+        "rating": 1520,
+        "name": "Starters 193 (Rated)"
+      },
+      {
+        "t": 1782318840,
+        "rating": 1554,
+        "name": "Starters 244 (Rated)"
+      },
+      {
+        "t": 1782923404,
+        "rating": 1593,
+        "name": "Starters 245 (Rated)"
+      },
+      {
+        "t": 1783528204,
+        "rating": 1611,
+        "name": "Starters 246 (Rated)"
+      },
+      {
+        "t": 1784133120,
+        "rating": 1636,
+        "name": "Starters 247 (Rated)"
+      },
+      {
+        "t": 1793809802,
+        "rating": 1623,
+        "name": "Starters 263 (Rated)"
+      }
+    ]
   },
   "leetcode": {
     "handle": "sarthak0703y",
     "profileUrl": "https://leetcode.com/u/sarthak0703y/",
     "solved": 400,
-    "solvedIsFloor": true
+    "solvedIsFloor": true,
+    "history": [
+      {
+        "t": 1782613800,
+        "rating": 1500,
+        "name": "Weekly Contest 508"
+      },
+      {
+        "t": 1783175400,
+        "rating": 1500,
+        "name": "Biweekly Contest 186"
+      },
+      {
+        "t": 1784385000,
+        "rating": 1500,
+        "name": "Biweekly Contest 187"
+      },
+      {
+        "t": 1792852200,
+        "rating": 1500,
+        "name": "Biweekly Contest 194"
+      }
+    ]
   }
 }

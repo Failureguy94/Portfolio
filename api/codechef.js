@@ -1,3 +1,39 @@
+const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+
+// The public profile page embeds every rated contest as `var all_rating = [...]`.
+function parseHistory(html) {
+  const m = html.match(/var all_rating\s*=\s*(\[[\s\S]*?\]);/)
+  if (!m) return null
+  try {
+    return JSON.parse(m[1])
+      .map((c) => ({
+        // end_date is Indian Standard Time
+        t: Math.round(Date.parse(`${String(c.end_date).replace(' ', 'T')}+05:30`) / 1000),
+        rating: parseInt(c.rating, 10),
+        name: c.name,
+      }))
+      .filter((c) => Number.isFinite(c.t) && Number.isFinite(c.rating))
+  } catch {
+    return null
+  }
+}
+
+async function fetchProfilePage(handle) {
+  const pageRes = await fetch(`https://www.codechef.com/users/${encodeURIComponent(handle)}`, {
+    headers: { 'User-Agent': UA },
+  })
+  if (!pageRes.ok) throw new Error(`CodeChef responded with HTTP ${pageRes.status}`)
+  return pageRes.text()
+}
+
+async function historyFromPage(handle) {
+  try {
+    return parseHistory(await fetchProfilePage(handle))
+  } catch {
+    return null
+  }
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS')
@@ -66,6 +102,7 @@ export default async function handler(req, res) {
               stars: starsNum || null,
               contests,
               totalSolved,
+              history: await historyFromPage(handle),
               authenticated: true,
               source: 'live',
             })
@@ -96,6 +133,7 @@ export default async function handler(req, res) {
             maxRating: user.highestRating,
             stars: starsNum,
             contests: null,
+            history: await historyFromPage(handle),
             authenticated: true,
             source: 'live',
           })
@@ -104,17 +142,7 @@ export default async function handler(req, res) {
     }
 
     // 3. Fallback to direct public profile scraper
-    const pageRes = await fetch(`https://www.codechef.com/users/${encodeURIComponent(handle)}`, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-      },
-    })
-
-    if (!pageRes.ok) {
-      throw new Error(`CodeChef responded with HTTP ${pageRes.status}`)
-    }
-
-    const html = await pageRes.text()
+    const html = await fetchProfilePage(handle)
     const ratingMatch = html.match(/class="rating-number"[^>]*>\s*([0-9]+)\s*</)
     const highestMatch = html.match(/\(Highest Rating\s*([0-9]+)\)/)
     const starBlock = html.match(/class="rating-star"[^>]*>([\s\S]*?)<\/div>/)
@@ -131,6 +159,7 @@ export default async function handler(req, res) {
       maxRating: highestMatch ? parseInt(highestMatch[1], 10) : rating,
       stars: starCount || null,
       contests: null,
+      history: parseHistory(html),
       authenticated: Boolean(token),
       source: 'live',
     })

@@ -21,6 +21,11 @@ export default async function handler(req, res) {
       }
       profile { ranking reputation }
     }
+    userContestRankingHistory(username: $username) {
+      attended
+      rating
+      contest { title startTime }
+    }
   }`
 
   const headers = {
@@ -46,6 +51,11 @@ export default async function handler(req, res) {
     const stats = json?.data?.matchedUser?.submitStats?.acSubmissionNum || []
     const ranking = json?.data?.matchedUser?.profile?.ranking || null
 
+    // contest rating after each contest the user actually took part in
+    const contestHistory = (json?.data?.userContestRankingHistory || [])
+      .filter((c) => c.attended && c.contest)
+      .map((c) => ({ t: c.contest.startTime, rating: Math.round(c.rating), name: c.contest.title }))
+
     let solved = 0
     let easy = 0
     let medium = 0
@@ -65,6 +75,7 @@ export default async function handler(req, res) {
       medium,
       hard,
       ranking,
+      contestHistory,
       authenticated: Boolean(sessionToken),
       source: 'live',
     })
