@@ -1,21 +1,26 @@
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig, loadEnv } from 'vite'
-import { siteMeta } from './src/data/metadata.js'
+import { siteMeta, siteUrl } from './src/data/metadata.js'
 import leetcodeHandler from './api/leetcode.js'
 import codechefHandler from './api/codechef.js'
 
+const escapeAttr = (v) => String(v).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
+
 function htmlMetaPlugin() {
+  const tokens = {
+    SITE_TITLE: siteMeta.title,
+    SITE_DESCRIPTION: siteMeta.description,
+    SITE_URL: siteUrl,
+    OG_TITLE: siteMeta.ogTitle,
+    OG_DESCRIPTION: siteMeta.ogDescription,
+    OG_IMAGE: siteMeta.ogImage,
+    OG_IMAGE_ALT: siteMeta.ogImageAlt,
+  }
   return {
     name: 'html-meta-plugin',
     transformIndexHtml(html) {
-      return html
-        .replace(/<title>.*?<\/title>/, `<title>${siteMeta.title}</title>`)
-        .replace(/<meta\s+name="description"\s+content=".*?"\s*\/>/, `<meta name="description" content="${siteMeta.description}" />`)
-        .replace(/<meta\s+property="og:title"\s+content=".*?"\s*\/>/, `<meta property="og:title" content="${siteMeta.ogTitle}" />`)
-        .replace(/<meta\s+property="og:description"\s+content=".*?"\s*\/>/, `<meta property="og:description" content="${siteMeta.ogDescription}" />`)
-        .replace(/<meta\s+name="twitter:title"\s+content=".*?"\s*\/>/, `<meta name="twitter:title" content="${siteMeta.twitterTitle}" />`)
-        .replace(/<meta\s+name="twitter:description"\s+content=".*?"\s*\/>/, `<meta name="twitter:description" content="${siteMeta.twitterDescription}" />`)
+      return html.replace(/%([A-Z_]+)%/g, (m, key) => (key in tokens ? escapeAttr(tokens[key]) : m))
     },
   }
 }

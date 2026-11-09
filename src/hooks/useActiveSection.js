@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 export function useActiveSection(ids) {
-  const [active, setActive] = useState(ids[0] ?? '')
+  const [active, setActive] = useState('')
 
   useEffect(() => {
     const sections = ids
