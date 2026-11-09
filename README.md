@@ -80,7 +80,7 @@ A blood pool and a black silhouetted figure holding a microscope slide are hidde
 - The film-leader countdown runs for 1.65 s, once per tab (`sessionStorage`). It can be skipped with Esc, Enter, Space, a click, or the focused "Skip intro" button.
 - Motion, almost all CSS:
   - Text rises out of a soft blur, and headings slide in word by word.
-  - The hero has pointer parallax and a morphing cut-paper disc.
+  - The hero has pointer parallax and a hidden artwork revealed by a cursor trail.
   - Each poster animates its own parts and tilts toward the cursor.
   - Two film-strip marquees run between sections.
   - The numbers and skills sections use glass panels over drifting colour fields.
