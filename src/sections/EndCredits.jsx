@@ -85,6 +85,9 @@ export default function EndCredits() {
           <ExtLink href={profile.linkedin.url}>
             LinkedIn<span className="sr-only"> (opens in a new tab)</span>
           </ExtLink>
+          <ExtLink href={profile.twitter.url}>
+            X (Twitter)<span className="sr-only"> (opens in a new tab)</span>
+          </ExtLink>
           <a href={profile.resumePath} className="link" download>
             {copy.resume}
           </a>

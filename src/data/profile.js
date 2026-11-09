@@ -13,6 +13,7 @@ export const profile = {
   email: 'sarthakforjobs@gmail.com',
   github: { handle: 'Failureguy94', url: 'https://github.com/Failureguy94' },
   linkedin: { handle: 'sarthak14313', url: 'https://www.linkedin.com/in/sarthak14313' },
+  twitter: { handle: 'Sarthak14313', url: 'https://x.com/Sarthak14313' },
   resumePath: '/resume.pdf',
   availability: 'Currently open to internships.',
 }
