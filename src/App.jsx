@@ -1,90 +1,52 @@
-import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
-import { CheckeredDivider } from './components/CheckeredDivider'
-import { LightsOutIntro } from './components/LightsOutIntro'
-import { Navbar } from './components/Navbar'
-import { ScrollProgress } from './components/ScrollProgress'
-import { ShortcutHelp } from './components/ShortcutHelp'
-import { BackToTop } from './components/BackToTop'
-import { Hero } from './sections/Hero'
-import { siteMeta } from './data/metadata'
+import { lazy, Suspense, useCallback, useState } from 'react'
+import { Countdown } from './components/Countdown'
+import { FilmStrip } from './components/FilmStrip'
+import { Grain } from './components/Grain'
+import { Nav } from './components/Nav'
+import { RoughFilter } from './components/RoughFilter'
+import { copy } from './data/copy'
+import { projects } from './data/projects'
+import { skillGroups } from './data/skills'
+import { shouldPlayCountdown } from './lib/leader'
+import { ColdOpen } from './sections/ColdOpen'
+import { OpeningCredits } from './sections/OpeningCredits'
 
-const Telemetry = lazy(() => import('./sections/Telemetry').then((m) => ({ default: m.Telemetry })))
-const RaceCalendar = lazy(() => import('./sections/RaceCalendar').then((m) => ({ default: m.RaceCalendar })))
-const PitWall = lazy(() => import('./sections/PitWall').then((m) => ({ default: m.PitWall })))
-const TeamRadio = lazy(() => import('./sections/TeamRadio').then((m) => ({ default: m.TeamRadio })))
+const Features = lazy(() => import('./sections/Features'))
+const BoxOffice = lazy(() => import('./sections/BoxOffice'))
+const CastCrew = lazy(() => import('./sections/CastCrew'))
+const EndCredits = lazy(() => import('./sections/EndCredits'))
 
-function PanelFallback() {
-  return (
-    <div className="mx-auto max-w-6xl px-4 py-24 font-mono text-sm text-silver" aria-hidden="true">
-      Loading sector…
-    </div>
-  )
-}
+const projectTitles = projects.map((p) => p.title)
+const skillNames = skillGroups.flatMap((g) => g.items.map((i) => i.name))
 
 export default function App() {
-  const [introDone, setIntroDone] = useState(false)
-  const [replay, setReplay] = useState(0)
-  const [help, setHelp] = useState(false)
-
-  const finishIntro = useCallback(() => setIntroDone(true), [])
-
-  useEffect(() => {
-    document.title = siteMeta.title
-    const desc = document.querySelector('meta[name="description"]')
-    if (desc) desc.setAttribute('content', siteMeta.description)
-    const ogTitle = document.querySelector('meta[property="og:title"]')
-    if (ogTitle) ogTitle.setAttribute('content', siteMeta.ogTitle)
-    const ogDesc = document.querySelector('meta[property="og:description"]')
-    if (ogDesc) ogDesc.setAttribute('content', siteMeta.ogDescription)
-    const twTitle = document.querySelector('meta[name="twitter:title"]')
-    if (twTitle) twTitle.setAttribute('content', siteMeta.twitterTitle)
-    const twDesc = document.querySelector('meta[name="twitter:description"]')
-    if (twDesc) twDesc.setAttribute('content', siteMeta.twitterDescription)
-  }, [])
-
-  useEffect(() => {
-    function onKey(e) {
-      const tag = e.target?.tagName
-      if (tag === 'INPUT' || tag === 'TEXTAREA') return
-      const key = e.key.toLowerCase()
-      if (key === 'r') {
-        setIntroDone(false)
-        setReplay((n) => n + 1)
-      } else if (key === 'p') {
-        document.getElementById('races')?.scrollIntoView({ behavior: 'smooth' })
-      } else if (key === 'c') {
-        document.getElementById('radio')?.scrollIntoView({ behavior: 'smooth' })
-      } else if (e.key === '?' || (e.shiftKey && e.key === '/')) {
-        setHelp((v) => !v)
-      } else if (e.key === 'Escape') {
-        setHelp(false)
-      }
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [])
+  const [leader, setLeader] = useState(shouldPlayCountdown)
+  const endLeader = useCallback(() => setLeader(false), [])
 
   return (
-    <div className="carbon-bg min-h-screen pb-16 md:pb-0">
-      <ScrollProgress />
-      <LightsOutIntro key={replay} force={replay > 0} onDone={finishIntro} />
-      <Navbar onHelp={() => setHelp(true)} />
-      <main>
-        <Hero />
-        <CheckeredDivider />
-        <Suspense fallback={<PanelFallback />}>
-          <Telemetry />
-          <CheckeredDivider />
-          <RaceCalendar />
-          <CheckeredDivider />
-          <PitWall />
-          <CheckeredDivider />
-          <TeamRadio />
+    <>
+      <a
+        href="#main"
+        className="sr-only z-[70] bg-mustard px-4 py-3 font-sans font-semibold text-ink focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+      >
+        {copy.skipToContent}
+      </a>
+      <RoughFilter />
+      <Nav />
+      <main id="main">
+        <ColdOpen />
+        <OpeningCredits />
+        <FilmStrip items={projectTitles} speed={36} />
+        <Suspense fallback={<div className="min-h-[200vh] bg-paper" aria-hidden="true" />}>
+          <Features />
+          <BoxOffice />
+          <CastCrew />
+          <FilmStrip items={skillNames} speed={60} reverse />
+          <EndCredits />
         </Suspense>
       </main>
-      <ShortcutHelp open={help} onClose={() => setHelp(false)} />
-      <BackToTop />
-      {introDone ? null : <div className="sr-only" aria-live="polite">Lights-out sequence playing</div>}
-    </div>
+      <Grain />
+      {leader ? <Countdown onDone={endLeader} /> : null}
+    </>
   )
 }

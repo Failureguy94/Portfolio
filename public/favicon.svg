@@ -1,13 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="S checkered mark">
-  <rect width="32" height="32" rx="4" fill="#0B1230"/>
-  <g fill="#C7CBD6">
-    <rect x="2" y="2" width="4" height="4"/>
-    <rect x="10" y="2" width="4" height="4"/>
-    <rect x="18" y="2" width="4" height="4"/>
-    <rect x="26" y="2" width="4" height="4"/>
-    <rect x="6" y="6" width="4" height="4"/>
-    <rect x="14" y="6" width="4" height="4"/>
-    <rect x="22" y="6" width="4" height="4"/>
-  </g>
-  <text x="16" y="26" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="16" font-style="italic" font-weight="800" fill="#FFCC00">S</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" fill="#121110"/>
+  <circle cx="32" cy="32" r="25" fill="none" stroke="#F0E6D0" stroke-width="3"/>
+  <path d="M32 32 L32 7 A25 25 0 0 1 54 20 Z" fill="#D8431E"/>
+  <text x="32" y="44" text-anchor="middle" font-family="Impact, Anton, sans-serif" font-size="34" fill="#F0E6D0">S</text>
 </svg>

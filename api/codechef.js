@@ -55,15 +55,15 @@ export default async function handler(req, res) {
               json?.highestRating ??
               rawRating
             const rawStars = json?.data?.rank ?? json?.profile?.stars ?? json?.stars
-            const starsNum = rawStars ? parseInt(String(rawStars).replace(/[^0-9]/g, ''), 10) : 3
-            const contests = json?.data?.totalContests ?? json?.profile?.totalContests ?? 37
-            const totalSolved = json?.data?.totalSolved ?? json?.profile?.totalSolved ?? 640
+            const starsNum = rawStars ? parseInt(String(rawStars).replace(/[^0-9]/g, ''), 10) : null
+            const contests = json?.data?.totalContests ?? json?.profile?.totalContests ?? null
+            const totalSolved = json?.data?.totalSolved ?? json?.profile?.totalSolved ?? null
 
             return res.status(200).json({
               handle,
               rating: Math.round(Number(rawRating)),
               maxRating: Math.round(Number(rawMax)),
-              stars: starsNum || 3,
+              stars: starsNum || null,
               contests,
               totalSolved,
               authenticated: true,
@@ -89,13 +89,13 @@ export default async function handler(req, res) {
         const user = json?.result?.data?.content
         if (user) {
           const rawStars = user.stars
-          const starsNum = parseInt(String(rawStars).replace('★', ''), 10) || 3
+          const starsNum = parseInt(String(rawStars).replace('★', ''), 10) || null
           return res.status(200).json({
             handle,
             rating: user.currentRating,
             maxRating: user.highestRating,
             stars: starsNum,
-            contests: 37,
+            contests: null,
             authenticated: true,
             source: 'live',
           })
@@ -118,14 +118,19 @@ export default async function handler(req, res) {
     const ratingMatch = html.match(/class="rating-number"[^>]*>\s*([0-9]+)\s*</)
     const highestMatch = html.match(/\(Highest Rating\s*([0-9]+)\)/)
     const starBlock = html.match(/class="rating-star"[^>]*>([\s\S]*?)<\/div>/)
-    const starCount = starBlock ? (starBlock[1].match(/&#9733;/g) || []).length : 3
+    const starCount = starBlock ? (starBlock[1].match(/&#9733;/g) || []).length : null
+
+    if (!ratingMatch) {
+      throw new Error('CodeChef rating not found on profile page')
+    }
+    const rating = parseInt(ratingMatch[1], 10)
 
     return res.status(200).json({
       handle,
-      rating: ratingMatch ? parseInt(ratingMatch[1], 10) : 1636,
-      maxRating: highestMatch ? parseInt(highestMatch[1], 10) : 1636,
-      stars: starCount || 3,
-      contests: 37,
+      rating,
+      maxRating: highestMatch ? parseInt(highestMatch[1], 10) : rating,
+      stars: starCount || null,
+      contests: null,
       authenticated: Boolean(token),
       source: 'live',
     })

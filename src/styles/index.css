@@ -1,205 +1,479 @@
 @import "tailwindcss";
 
 @theme {
-  --color-navy: #0b1230;
-  --color-surface: #060a1f;
-  --color-racing: #dc0a2d;
-  --color-sun: #ffcc00;
-  --color-silver: #c7cbd6;
-  --color-sector-purple: #9d4edd;
-  --color-sector-green: #00d26a;
-  --color-sector-yellow: #ffcc00;
-  --font-display: "Orbitron", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --color-ink: #121110;
+  --color-ink-2: #2a2724;
+  --color-paper: #f0e6d0;
+  --color-paper-2: #d9cdb4;
+  --color-bass: #d8431e;
+  --color-mustard: #e3a82b;
+  /* muted text: paper at reduced strength, still AA on ink (8.9:1) */
+  --color-dim: #b5ab97;
+  /* muted text on paper, AA (6.9:1) */
+  --color-dim-ink: #57504a;
+
+  --font-title: "Anton", "Anton Fallback", Impact, "Arial Narrow", sans-serif;
+  --font-serif: "Source Serif 4", "Source Serif Fallback", Georgia, serif;
+  --font-sans: "Inter", "Inter Fallback", ui-sans-serif, system-ui, sans-serif;
+
+  --ease-cut: cubic-bezier(0.7, 0, 0.3, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Anton is self-hosted and preloaded (SIL OFL 1.1) so the hero title never swaps after paint. */
+@font-face {
+  font-family: "Anton";
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url("/fonts/anton-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Metric-matched fallbacks keep the swap from shifting layout. */
+@font-face {
+  font-family: "Anton Fallback";
+  src: local("Impact"), local("Arial Narrow Bold"), local("Arial");
+  size-adjust: 104%;
+  ascent-override: 117%;
+  descent-override: 33%;
+}
+@font-face {
+  font-family: "Source Serif Fallback";
+  src: local("Georgia"), local("Times New Roman");
+  size-adjust: 102%;
+}
+@font-face {
+  font-family: "Inter Fallback";
+  src: local("Arial"), local("Helvetica");
+  size-adjust: 107%;
 }
 
 html {
   scroll-behavior: smooth;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+  scroll-padding-top: 56px;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
-  min-height: 100vh;
-  background-color: var(--color-navy);
-  color: #fff;
-  font-family: var(--font-sans);
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background-color: var(--color-racing);
-  color: #ffffff;
-}
-
-section[id],
-[id] {
-  scroll-margin-top: 4.5rem;
+  background: var(--color-mustard);
+  color: var(--color-ink);
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-sun);
-  outline-offset: 2px;
+  outline: 3px solid var(--color-mustard);
+  outline-offset: 3px;
+}
+.tone-paper :focus-visible {
+  outline-color: var(--color-ink);
 }
 
-.carbon-bg {
-  background-color: var(--color-navy);
-  background-image:
-    linear-gradient(180deg, rgb(6 10 31 / 0.55), rgb(11 18 48 / 0.2)),
-    repeating-linear-gradient(
-      90deg,
-      rgb(255 255 255 / 0.015) 0 1px,
-      transparent 1px 80px
-    ),
-    repeating-linear-gradient(
-      135deg,
-      rgb(255 255 255 / 0.02) 0 1px,
-      transparent 1px 3px
-    );
+@layer components {
+.font-title {
+  font-family: var(--font-title);
+  font-weight: 400;
+  text-transform: uppercase;
+  line-height: 0.86;
+  letter-spacing: -0.005em;
 }
 
-.checkered-rule {
-  height: 10px;
-  background-image: repeating-linear-gradient(
-    90deg,
-    #fff 0 10px,
-    #111 10px 20px
-  );
-  opacity: 0.18;
+/* ---------- links ---------- */
+.link {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  transition: text-decoration-thickness 120ms;
+}
+.link:hover {
+  text-decoration-thickness: 3px;
 }
 
-.sector-bar {
-  height: 3px;
-  background: linear-gradient(
-    90deg,
-    var(--color-sector-purple) 0 33%,
-    var(--color-sector-green) 33% 66%,
-    var(--color-sector-yellow) 66% 100%
-  );
+.btn-fill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.85em 1.4em;
+  min-height: 48px;
+  transition: transform 120ms;
+}
+.btn-fill:active {
+  transform: translateY(1px);
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
 }
 
-.skeleton-shimmer {
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.04) 25%,
-    rgba(255, 255, 255, 0.1) 37%,
-    rgba(255, 255, 255, 0.04) 63%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
+/* ---------- reels ---------- */
+.tone-ink {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+.tone-paper {
+  background: var(--color-paper);
+  color: var(--color-ink);
 }
 
-.project-card {
-  position: relative;
-  transition: border-color 150ms ease, box-shadow 150ms ease;
-  will-change: transform;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .project-card:hover {
-    border-color: #dc0a2d;
-  }
-}
-
-.project-card::before,
-.project-card::after {
-  content: '';
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  pointer-events: none;
+/* ---------- smooth text surfacing ---------- */
+/* Blocks rise a little and sharpen out of a soft blur. */
+.rise {
   opacity: 0;
-  transition: opacity 150ms ease;
-  z-index: 10;
+  transform: translateY(22px);
+  filter: blur(8px);
+  transition:
+    opacity 900ms var(--ease-out),
+    transform 900ms var(--ease-out),
+    filter 900ms var(--ease-out);
+  transition-delay: var(--d, 0ms);
+}
+.rise[data-inview="true"] {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
 }
 
-.project-card::before {
-  top: -1px;
-  left: -1px;
-  border-top: 2px solid #dc0a2d;
-  border-left: 2px solid #dc0a2d;
+/* Headings: each word slides up out of its own mask. */
+.split-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.06em;
+  margin-bottom: -0.06em;
+}
+.split-word > span {
+  display: inline-block;
+  transform: translateY(105%) rotate(4deg);
+  transform-origin: 0 100%;
+  transition: transform 1100ms cubic-bezier(0.19, 1, 0.22, 1);
+  transition-delay: calc(var(--d, 0ms) + var(--i, 0) * 75ms);
+}
+[data-inview="true"] .split-word > span {
+  transform: none;
 }
 
-.project-card::after {
-  bottom: -1px;
-  right: -1px;
-  border-bottom: 2px solid #dc0a2d;
-  border-right: 2px solid #dc0a2d;
+/* ---------- glass ---------- */
+.glass {
+  background: rgba(240, 230, 208, 0.05);
+  border: 1px solid rgba(240, 230, 208, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(240, 230, 208, 0.1),
+    0 30px 60px -30px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+}
+.glass-paper {
+  background: rgba(240, 230, 208, 0.8);
+  border: 1px solid rgba(18, 17, 16, 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 24px 48px -32px rgba(18, 17, 16, 0.45);
+  backdrop-filter: blur(18px) saturate(130%);
+  -webkit-backdrop-filter: blur(18px) saturate(130%);
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .project-card:hover::before,
-  .project-card:hover::after {
-    opacity: 0.9;
-  }
+/* Soft colour fields that drift behind glass panels. */
+.blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(70px);
+  pointer-events: none;
+  animation: drift 18s ease-in-out infinite alternate;
 }
-
-.btn-primary-yellow {
-  background-color: var(--color-sun);
-  color: var(--color-navy);
-  transition: transform 150ms ease, box-shadow 150ms ease;
-  will-change: transform, box-shadow;
+.drift {
+  animation: drift 22s ease-in-out infinite alternate;
 }
-
-@media (hover: hover) and (pointer: fine) {
-  .btn-primary-yellow:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 4px 4px 0 #dc0a2d;
-  }
-  .btn-primary-yellow:active {
-    transform: translate(0, 0);
-    box-shadow: 0 0 0 #dc0a2d;
-  }
-}
-
-@keyframes status-glow {
-  0%, 100% {
-    box-shadow: 0 0 4px #ffcc00, 0 0 8px rgba(255, 204, 0, 0.4);
-    opacity: 1;
+@keyframes drift {
+  0% {
+    transform: translate(0, 0) scale(1);
   }
   50% {
-    box-shadow: 0 0 12px #ffcc00, 0 0 20px rgba(255, 204, 0, 0.7);
-    opacity: 0.85;
+    transform: translate(6vw, -4vh) scale(1.12);
+  }
+  100% {
+    transform: translate(-4vw, 5vh) scale(0.94);
   }
 }
 
-.status-pulse-glow {
-  animation: status-glow 2s infinite ease-in-out;
+/* ---------- film strip marquee ---------- */
+.film-strip {
+  --hole: rgba(240, 230, 208, 0.16);
+  background-color: #0b0a09;
+  background-image:
+    linear-gradient(90deg, var(--hole) 0 14px, transparent 14px 30px),
+    linear-gradient(90deg, var(--hole) 0 14px, transparent 14px 30px);
+  background-size: 30px 8px, 30px 8px;
+  background-position: 0 8px, 0 calc(100% - 8px);
+  background-repeat: repeat-x;
+}
+.marquee-track {
+  animation: marquee var(--speed, 40s) linear infinite;
+}
+.marquee-track[data-reverse="true"] {
+  animation-direction: reverse;
+}
+.film-strip:hover .marquee-track {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
 }
 
+/* ---------- film grain ---------- */
+.grain {
+  position: fixed;
+  inset: -50%;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 1.6 -0.35'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  animation: grain 0.24s steps(2, end) infinite;
+  will-change: transform;
+}
+@keyframes grain {
+  to {
+    transform: translate(-37px, 23px);
+  }
+}
+
+/* ---------- hero ---------- */
+.push-in {
+  transform-origin: 30% 60%;
+  animation: push-in 14s linear forwards;
+}
+@keyframes push-in {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.06);
+  }
+}
+/* pointer parallax: --mx / --my run from -1 to 1 */
+.parallax {
+  transform: translate3d(calc(var(--mx, 0) * var(--depth) * 1px), calc(var(--my, 0) * var(--depth) * 1px), 0);
+  transition: transform 600ms var(--ease-out);
+}
+.float {
+  animation: float 6s ease-in-out infinite alternate;
+}
+@keyframes float {
+  to {
+    translate: 0 -10px;
+    rotate: -2deg;
+  }
+}
+
+/* ---------- posters ---------- */
+.tilt {
+  transform: perspective(900px) rotateX(calc(var(--ty, 0) * -7deg)) rotateY(calc(var(--tx, 0) * 9deg)) rotate(var(--rest, 0deg));
+  transition: transform 500ms var(--ease-out);
+  will-change: transform;
+}
+.tilt-sheen {
+  background: radial-gradient(
+    circle at calc(50% + var(--tx, 0) * 50%) calc(50% + var(--ty, 0) * 50%),
+    rgba(255, 255, 255, 0.28),
+    transparent 55%
+  );
+  opacity: var(--sheen, 0);
+  transition: opacity 400ms;
+  mix-blend-mode: soft-light;
+}
+.anim {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.bob {
+  animation: bob 3.2s ease-in-out infinite alternate;
+}
+@keyframes bob {
+  from {
+    transform: translateY(-3px) rotate(-3deg);
+  }
+  to {
+    transform: translateY(3px) rotate(3deg);
+  }
+}
+.ping {
+  animation: ping 2.4s ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
+@keyframes ping {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+.spin-slow {
+  animation: spin 22s linear infinite;
+}
+.spin-med {
+  animation: spin 9s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.sway {
+  animation: sway 3.6s ease-in-out infinite alternate;
+  animation-delay: var(--d, 0s);
+  transform-origin: 50% 50%;
+}
+@keyframes sway {
+  from {
+    transform: rotate(-2.5deg);
+  }
+  to {
+    transform: rotate(2.5deg);
+  }
+}
+.scan {
+  animation: scan 7s ease-in-out infinite alternate;
+}
+@keyframes scan {
+  from {
+    transform: translateX(-190px);
+  }
+  to {
+    transform: translateX(80px);
+  }
+}
+.sweep-lens {
+  animation: sweep-lens 6s ease-in-out infinite alternate;
+}
+@keyframes sweep-lens {
+  from {
+    transform: translate(-14px, 8px);
+  }
+  to {
+    transform: translate(10px, -10px);
+  }
+}
+.dash-flow {
+  animation: dash-flow 1.6s linear infinite;
+}
+@keyframes dash-flow {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+/* ---------- countdown ---------- */
+.leader-sweep {
+  transform-origin: 50% 50%;
+  animation: sweep 550ms linear infinite;
+}
+@keyframes sweep {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- rolling digits ---------- */
+.roll {
+  display: inline-flex;
+  overflow: hidden;
+  height: 1em;
+  line-height: 1;
+  vertical-align: bottom;
+}
+.roll-slot {
+  position: relative;
+  display: inline-block;
+}
+.roll-col {
+  position: absolute;
+  inset: 0 auto auto 50%;
+  margin-left: -0.5em;
+  width: 1em;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  transition: transform 1400ms cubic-bezier(0.16, 0.84, 0.24, 1);
+  transition-delay: var(--roll-delay, 0ms);
+}
+.roll-col > span {
+  height: 1em;
+}
+
+/* ---------- credit roll ---------- */
+.credit-roll {
+  animation: roll-up var(--roll-duration, 34s) linear infinite;
+}
+.credit-window:hover .credit-roll,
+.credit-window:focus-within .credit-roll,
+.credit-window:focus .credit-roll {
+  animation-play-state: paused;
+}
+.credit-window {
+  mask-image: linear-gradient(transparent, #000 18%, #000 82%, transparent);
+  -webkit-mask-image: linear-gradient(transparent, #000 18%, #000 82%, transparent);
+}
+@keyframes roll-up {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+/* ---------- reduced motion: show final states, no auto movement ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .btn-primary-yellow:hover,
-  .btn-primary-yellow:active {
-    transform: none !important;
-    box-shadow: none !important;
+  html {
+    scroll-behavior: auto;
   }
-  .status-pulse-glow {
-    animation: none !important;
+  .grain,
+  .push-in,
+  .leader-sweep,
+  .blob,
+  .drift,
+  .float,
+  .bob,
+  .ping,
+  .spin-slow,
+  .spin-med,
+  .sway,
+  .scan,
+  .sweep-lens,
+  .dash-flow,
+  .marquee-track,
+  .credit-roll {
+    animation: none;
+  }
+  .rise,
+  .split-word > span {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+  .roll-col,
+  .parallax,
+  .tilt {
+    transition: none;
+    transform: none;
+  }
+  .credit-window {
+    mask-image: none;
+    -webkit-mask-image: none;
   }
 }
-
-
-
