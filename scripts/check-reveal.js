@@ -108,6 +108,45 @@ for (const width of [390, 768, 1440]) {
   await ctx.close()
 }
 
+// Cast & Crew: the night scene revealed over the skill cards
+for (const width of [390, 1440]) {
+  const { ctx, page, errors } = await open(width)
+  await page.locator('#cast').scrollIntoViewIfNeeded()
+  await page.waitForFunction(() => document.querySelector('[data-cast-reveal]')?.width > 0, null, { timeout: 8000 })
+  await page.waitForTimeout(1200)
+  const art = await page.locator('[data-cast-reveal]').boundingBox()
+  const head = await page.locator('#cast header').boundingBox()
+  check(`cast ${width}: reveal starts below the heading`, art.y >= head.y + head.height, `${art.y} vs ${head.y + head.height}`)
+  const yMid = Math.max(art.y + 60, 0) + Math.min(art.height, 700) * 0.35
+  for (let i = 0; i <= 30; i++) {
+    const t = i / 30
+    await page.mouse.move(art.x + art.width * (0.1 + 0.8 * t), yMid + Math.sin(t * Math.PI * 2) * 120, { steps: 2 })
+    await page.waitForTimeout(12)
+  }
+  check(`cast ${width}: loop runs while trail is visible`, (await page.getAttribute('[data-cast-reveal]', 'data-running')) === 'true')
+  await page.screenshot({ path: `${out}/cast-${width}-a-mid-trail.png` })
+  await page.waitForTimeout(4500)
+  const s = await page.evaluate(() => {
+    const c = document.querySelector('[data-cast-reveal]')
+    const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data
+    let max = 0
+    for (let i = 3; i < d.length; i += 4) max = Math.max(max, d[i])
+    return { max, running: c.dataset.running, hidden: c.getAttribute('aria-hidden'), pe: getComputedStyle(c).pointerEvents }
+  })
+  await page.screenshot({ path: `${out}/cast-${width}-b-after-4500ms.png` })
+  check(`cast ${width}: hidden again and loop stopped`, s.max === 0 && s.running === 'false', `alpha ${s.max}, running ${s.running}`)
+  check(`cast ${width}: aria-hidden, ignores the pointer`, s.hidden === 'true' && s.pe === 'none')
+  const card = page.locator('#cast section').first()
+  await card.scrollIntoViewIfNeeded()
+  const onTop = await card.evaluate((el) => {
+    const r = el.getBoundingClientRect()
+    return el.contains(document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2))
+  })
+  check(`cast ${width}: cards stay on top`, onTop)
+  check(`cast ${width}: no console errors`, errors.length === 0, errors.join(' | '))
+  await ctx.close()
+}
+
 // discovery sweep: once per session, after the intro
 {
   const { ctx, page } = await open(1440, { sweep: true })

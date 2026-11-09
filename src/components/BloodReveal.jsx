@@ -2,38 +2,10 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
 import { useTrailMask } from '../hooks/useTrailMask'
 import { ART, ART_SRC } from '../lib/bloodArt'
+import { loadAfterFirstPaint } from '../lib/loadArt'
 
 const SWEEP_KEY = 'portfolio_blood_sweep'
 const EDGE = 8 // px the slide keeps from the hero's edges
-
-function afterFirstPaint(fn) {
-  let id = 0
-  let cancelled = false
-  const idle = () => {
-    if (cancelled) return
-    if ('requestIdleCallback' in window) id = window.requestIdleCallback(fn, { timeout: 2500 })
-    else id = window.setTimeout(fn, 200)
-  }
-  if (document.readyState === 'complete') idle()
-  else window.addEventListener('load', idle, { once: true })
-  return () => {
-    cancelled = true
-    window.removeEventListener('load', idle)
-    if ('cancelIdleCallback' in window) window.cancelIdleCallback(id)
-    window.clearTimeout(id)
-  }
-}
-
-function loadArt() {
-  const load = (src) =>
-    new Promise((resolve, reject) => {
-      const img = new Image()
-      img.decoding = 'async'
-      img.src = src
-      img.decode().then(() => resolve(img), reject)
-    })
-  return load(ART_SRC.webp).catch(() => load(ART_SRC.png))
-}
 
 /**
  * Where the artwork sits in the hero, in the coordinates of the name's container. The art is drawn
@@ -74,18 +46,7 @@ export function BloodReveal({ hostRef, nameRef, inkRef, ready }) {
   const [firstVisit] = useState(sweepNotSeen)
   const sweep = ready && !reduced && firstVisit
 
-  useEffect(() => {
-    let alive = true
-    const cancel = afterFirstPaint(() => {
-      loadArt()
-        .then((img) => alive && setImage(img))
-        .catch(() => {})
-    })
-    return () => {
-      alive = false
-      cancel()
-    }
-  }, [])
+  useEffect(() => loadAfterFirstPaint([ART_SRC.webp, ART_SRC.png], setImage), [])
 
   const getRect = useCallback(() => artRect(hostRef.current, nameRef.current), [hostRef, nameRef])
   const onSweepStart = useCallback(() => {

@@ -58,8 +58,8 @@ Results are cached for five minutes per tab.
 | `node scripts/make-og.js` | Re-renders the 1200×630 `public/og.png` title card from `profile.js` (needs network for fonts). Run it after changing the name or hero caption |
 | `node scripts/screenshots.js [url] [dir]` | Screenshots every section at 390, 768 and 1440 px |
 | `node scripts/verify.js [url]` | Checks horizontal scroll, the countdown and Skip credits by keyboard, link `rel`, external links, the resume, OG tags, the blood artwork file and its `aria-hidden` layer, no TODO strings, and reduced-motion behaviour |
-| `npm run art` | Re-renders the hidden hero artwork (see below) |
-| `node scripts/check-reveal.js [url] [dir]` | Screenshots the hero reveal mid-trail and 4.5 s later at 390, 768 and 1440 px; checks the loop stops when idle, long tasks, CLS, the sweep and reduced motion |
+| `npm run art` | Re-renders the hidden hero artwork and the Cast & Crew night scene (see below) |
+| `node scripts/check-reveal.js [url] [dir]` | Screenshots the hero reveal mid-trail and 4.5 s later at 390, 768 and 1440 px; checks the loop stops when idle, long tasks, CLS, the sweep and reduced motion; also checks the Cast & Crew reveal |
 
 The Playwright scripts need a browser once: `npx playwright install chromium`.
 
@@ -77,6 +77,13 @@ A blood pool and a microscope slide are hidden behind the hero name. Moving the 
   - `STATIC_OPACITY` (0.12): the still art shown under reduced motion
   - `SWEEP_MS`: length of the discovery sweep
 - **Behaviour:** the animation loop only runs while some trail is visible, and stops when the hero is offscreen or the tab is hidden. The layer is `aria-hidden`, ignores the pointer, and is absolutely positioned, so it cannot block clicks or shift layout. If the artwork fails to load, nothing happens. Where the revealed blood sits under the hero name, the letters turn paper-coloured: a canvas inside the `<h1>` redraws the name in paper colour and shows it only where the artwork is revealed, so it follows the name's parallax and keeps the cut-out letters readable (about 9:1 against the blood).
+
+## Hidden Cast & Crew scene
+
+The Cast & Crew section hides a night scene behind the skill cards: a lone figure seen from behind, sitting on a kerb across from an old cinema under a sodium lamp. The same cursor trail reveals it (`src/components/CastReveal.jsx`, sharing `useTrailMask`). It covers everything below the heading, so it shows wherever the pointer moves over or between the cards, and never sits behind the heading or intro. The cards there use a thinner frost (`.glass-window`) so the scene shows through, with the small text darkened to stay AA over it.
+
+- **Source:** `art/cast-night.svg`, an original illustration. To use a photograph made from the same brief instead, save it as `art/cast-night-photo.jpg` (or `.png`/`.webp`) and run `npm run art`. It is cover-cropped to 4:5 and written to `public/art/cast-night.webp`.
+- **Framing:** the portrait image is cropped to the wide section around `FOCUS` in `CastReveal.jsx` (`[0.5, 0.66]` keeps the cinema and the figure in view).
 
 ## Motion and accessibility
 

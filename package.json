@@ -8,7 +8,7 @@
     "build": "node scripts/check-todos.js && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "art": "node scripts/make-blood-art.js"
+    "art": "node scripts/make-blood-art.js && node scripts/make-cast-art.js"
   },
   "dependencies": {
     "react": "^19.3.1",

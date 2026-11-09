@@ -62,9 +62,12 @@ function sweepPoint(t) {
  * in the canvas's containing block ({ x, y, w, h } in CSS px).
  * `nameRef` / `inkRef`: the hero name and a canvas inside it. Where the revealed blood sits under
  * the name, the letters are redrawn there in paper colour, so they read as cut out of the blood.
+ * `cover`: crop the image to fill the rect, keeping the point `cover` = [fx, fy] (0–1) in view.
  */
-export function useTrailMask({ hostRef, canvasRef, nameRef, inkRef, image, getRect, reduced, sweep, onSweepStart }) {
+export function useTrailMask({ hostRef, canvasRef, nameRef, inkRef, image, getRect, reduced, sweep, onSweepStart, cover }) {
   const ctrl = useRef(null)
+  const coverX = cover?.[0]
+  const coverY = cover?.[1]
   const getRectRef = useRef(getRect)
   const onSweepStartRef = useRef(onSweepStart)
   useEffect(() => {
@@ -127,18 +130,29 @@ export function useTrailMask({ hostRef, canvasRef, nameRef, inkRef, image, getRe
     // Scale the artwork once per size, off the main thread where supported, so each frame is a 1:1 copy.
     function scaleArt(w, h) {
       const token = ++artToken
+      // source crop: the whole image, or a cover crop around the focus point
+      const iw = image.naturalWidth || image.width
+      const ih = image.naturalHeight || image.height
+      let [sx, sy, sw, sh] = [0, 0, iw, ih]
+      if (coverX != null) {
+        const k = Math.max(w / iw, h / ih)
+        sw = Math.min(iw, w / k)
+        sh = Math.min(ih, h / k)
+        sx = (iw - sw) * coverX
+        sy = (ih - sh) * coverY
+      }
       const fallback = () => {
         const c = document.createElement('canvas')
         c.width = w
         c.height = h
         const a = c.getContext('2d')
         a.imageSmoothingQuality = 'high'
-        a.drawImage(image, 0, 0, w, h)
+        a.drawImage(image, sx, sy, sw, sh, 0, 0, w, h)
         return c
       }
       const made =
         typeof createImageBitmap === 'function'
-          ? createImageBitmap(image, { resizeWidth: w, resizeHeight: h, resizeQuality: 'high' }).catch(fallback)
+          ? createImageBitmap(image, sx, sy, sw, sh, { resizeWidth: w, resizeHeight: h, resizeQuality: 'high' }).catch(fallback)
           : Promise.resolve(fallback())
       made.then((bmp) => {
         if (token !== artToken || disposed) {
@@ -445,7 +459,7 @@ export function useTrailMask({ hostRef, canvasRef, nameRef, inkRef, image, getRe
       document.removeEventListener('visibilitychange', onVisibility)
       window.removeEventListener('scroll', onScroll)
     }
-  }, [hostRef, canvasRef, nameRef, inkRef, image, reduced])
+  }, [hostRef, canvasRef, nameRef, inkRef, image, reduced, coverX, coverY])
 
   useEffect(() => {
     if (sweep && image && !reduced) ctrl.current?.sweep()

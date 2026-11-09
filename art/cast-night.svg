@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Cast & Crew background, revealed by the cursor trail. Original illustration after the brief:
+  a lone figure seen from behind, sitting on a kerb across the street from an old single-screen
+  cinema with an unlit marquee and a few warm bulbs. Sodium street lamp, wet asphalt, bokeh, haze.
+  Teal-black shadows, amber highlights (#E3A82B), burnt-orange jacket (#D8431E); every edge falls
+  off to #121110 so it melts into a dark page. No text, no faces.
+  Render with `npm run art` to public/art/cast-night.webp (2400×3000).
+  To use a photograph instead, save it as art/cast-night-photo.jpg (or .png/.webp) and run `npm run art`.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1500" width="1200" height="1500">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0a1416"/>
+      <stop offset="0.45" stop-color="#0f1c1e"/>
+      <stop offset="0.62" stop-color="#14201f"/>
+      <stop offset="1" stop-color="#121110"/>
+    </linearGradient>
+    <radialGradient id="lamp-bloom" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffd88a" stop-opacity="0.95"/>
+      <stop offset="0.08" stop-color="#f2b443" stop-opacity="0.75"/>
+      <stop offset="0.3" stop-color="#E3A82B" stop-opacity="0.28"/>
+      <stop offset="0.65" stop-color="#b8701c" stop-opacity="0.08"/>
+      <stop offset="1" stop-color="#E3A82B" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="teal-haze" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#2d6b6e" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#2d6b6e" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="facade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#121a1b"/>
+      <stop offset="1" stop-color="#1b1f1d"/>
+    </linearGradient>
+    <linearGradient id="foyer" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5a3a1a" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#2a1d12" stop-opacity="0.9"/>
+    </linearGradient>
+    <linearGradient id="road" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#151a19"/>
+      <stop offset="1" stop-color="#0e1112"/>
+    </linearGradient>
+    <linearGradient id="kerb" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a3c2a"/>
+      <stop offset="0.18" stop-color="#262421"/>
+      <stop offset="1" stop-color="#121110"/>
+    </linearGradient>
+    <linearGradient id="jacket" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#3a160c"/>
+      <stop offset="0.55" stop-color="#7a2a14"/>
+      <stop offset="0.9" stop-color="#b8461f"/>
+      <stop offset="1" stop-color="#D8431E"/>
+    </linearGradient>
+    <linearGradient id="hair" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0d0c0b"/>
+      <stop offset="0.8" stop-color="#2a2016"/>
+      <stop offset="1" stop-color="#7a5a2a"/>
+    </linearGradient>
+
+    <filter id="blur2" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2"/></filter>
+    <filter id="blur6" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="blur14" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="14"/></filter>
+    <filter id="blur30" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="30"/></filter>
+    <filter id="soft-bg" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="3.2"/></filter>
+    <!-- halation: lights bleed a warm red-orange fringe -->
+    <filter id="halation" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="9" result="wide"/>
+      <feColorMatrix in="wide" type="matrix" values="1 0 0 0 0.1  0 0.45 0 0 0  0 0 0.2 0 0  0 0 0 0.8 0" result="fringe"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.4" result="core"/>
+      <feMerge><feMergeNode in="fringe"/><feMergeNode in="core"/></feMerge>
+    </filter>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="4" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.5  0 0 0 0 0.48  0 0 0 0 0.44  0 0 0 1.1 -0.45"/>
+    </filter>
+    <filter id="wet" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.004 0.09" numOctaves="2" seed="8" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="26" xChannelSelector="R" yChannelSelector="G" result="d"/>
+      <feGaussianBlur in="d" stdDeviation="3 9"/>
+    </filter>
+
+    <radialGradient id="vignette" cx="0.5" cy="0.6" r="0.72">
+      <stop offset="0.45" stop-color="#121110" stop-opacity="0"/>
+      <stop offset="0.85" stop-color="#121110" stop-opacity="0.75"/>
+      <stop offset="1" stop-color="#121110" stop-opacity="1"/>
+    </radialGradient>
+    <linearGradient id="edge-top" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#121110"/><stop offset="1" stop-color="#121110" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="edge-bottom" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#121110"/><stop offset="1" stop-color="#121110" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="edge-left" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#121110"/><stop offset="1" stop-color="#121110" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="edge-right" x1="1" y1="0" x2="0" y2="0">
+      <stop offset="0" stop-color="#121110"/><stop offset="1" stop-color="#121110" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- night sky, large calm negative space -->
+  <rect width="1200" height="1500" fill="url(#sky)"/>
+  <ellipse cx="420" cy="560" rx="560" ry="300" fill="url(#teal-haze)"/>
+
+  <!-- the cinema across the street, slightly out of focus -->
+  <g id="cinema" filter="url(#soft-bg)">
+    <!-- neighbouring buildings -->
+    <rect x="-20" y="610" width="230" height="360" fill="#0f1515"/>
+    <rect x="1000" y="560" width="230" height="410" fill="#101516"/>
+    <rect x="40" y="690" width="26" height="40" fill="#3a5a58" opacity="0.35"/>
+    <rect x="110" y="740" width="26" height="40" fill="#8a6a30" opacity="0.25"/>
+    <!-- facade -->
+    <rect x="205" y="470" width="800" height="500" fill="url(#facade)"/>
+    <rect x="205" y="470" width="800" height="14" fill="#1c2524"/>
+    <!-- blank vertical blade sign (unlit) with a few bulbs -->
+    <rect x="565" y="330" width="80" height="250" rx="6" fill="#171d1d" stroke="#232a29" stroke-width="3"/>
+    <!-- marquee canopy -->
+    <path d="M190 690 L1020 690 L1000 790 L210 790 Z" fill="#1a1f1e"/>
+    <rect x="215" y="702" width="780" height="70" fill="#0f1313"/>
+    <path d="M210 790 L1000 790 L1000 806 L210 806 Z" fill="#2a2a24"/>
+    <!-- foyer behind glass doors: a dim warm glow -->
+    <rect x="360" y="835" width="490" height="135" fill="url(#foyer)"/>
+    <g stroke="#0f1212" stroke-width="10">
+      <line x1="482" y1="835" x2="482" y2="970"/><line x1="605" y1="835" x2="605" y2="970"/><line x1="728" y1="835" x2="728" y2="970"/>
+    </g>
+    <!-- poster cases, empty -->
+    <rect x="245" y="845" width="80" height="115" fill="#1d2120" stroke="#3a3326" stroke-width="3"/>
+    <rect x="885" y="845" width="80" height="115" fill="#1d2120" stroke="#3a3326" stroke-width="3"/>
+    <!-- pavement on the far side -->
+    <rect x="-20" y="968" width="1240" height="18" fill="#1d1f1c"/>
+  </g>
+
+  <!-- marquee bulbs: most dark, a few still lit -->
+  <g id="bulbs-dark" fill="#2b2a24">
+    <circle cx="230" cy="697" r="4"/><circle cx="290" cy="697" r="4"/><circle cx="410" cy="697" r="4"/><circle cx="470" cy="697" r="4"/>
+    <circle cx="590" cy="697" r="4"/><circle cx="710" cy="697" r="4"/><circle cx="770" cy="697" r="4"/><circle cx="890" cy="697" r="4"/>
+    <circle cx="950" cy="697" r="4"/><circle cx="260" cy="783" r="4"/><circle cx="380" cy="783" r="4"/><circle cx="500" cy="783" r="4"/>
+    <circle cx="620" cy="783" r="4"/><circle cx="680" cy="783" r="4"/><circle cx="800" cy="783" r="4"/><circle cx="860" cy="783" r="4"/>
+    <circle cx="605" cy="360" r="4"/><circle cx="605" cy="420" r="4"/><circle cx="605" cy="510" r="4"/>
+  </g>
+  <g id="bulbs-lit" filter="url(#halation)" fill="#ffd27a">
+    <circle cx="350" cy="697" r="5"/><circle cx="530" cy="697" r="5"/><circle cx="650" cy="697" r="5"/>
+    <circle cx="830" cy="697" r="5"/><circle cx="320" cy="783" r="5"/><circle cx="560" cy="783" r="5"/>
+    <circle cx="740" cy="783" r="5"/><circle cx="920" cy="783" r="5"/><circle cx="605" cy="390" r="5"/>
+    <circle cx="605" cy="465" r="5"/><circle cx="605" cy="545" r="5"/>
+  </g>
+
+  <!-- distant lights as round bokeh -->
+  <g id="bokeh">
+    <circle cx="70" cy="880" r="34" fill="#E3A82B" opacity="0.16" filter="url(#blur6)"/>
+    <circle cx="150" cy="930" r="22" fill="#5fa3a0" opacity="0.18" filter="url(#blur6)"/>
+    <circle cx="1080" cy="860" r="40" fill="#E3A82B" opacity="0.14" filter="url(#blur6)"/>
+    <circle cx="1140" cy="935" r="26" fill="#d8431e" opacity="0.14" filter="url(#blur6)"/>
+    <circle cx="1030" cy="930" r="18" fill="#5fa3a0" opacity="0.16" filter="url(#blur6)"/>
+    <circle cx="40" cy="790" r="16" fill="#ffd27a" opacity="0.18" filter="url(#blur2)"/>
+    <circle cx="1165" cy="800" r="14" fill="#ffd27a" opacity="0.16" filter="url(#blur2)"/>
+  </g>
+
+  <!-- sodium street lamp, right of frame -->
+  <g id="lamp">
+    <rect x="1010" y="250" width="12" height="740" fill="#0c0f0f"/>
+    <path d="M1016 262 C1000 238 960 232 930 240" stroke="#0c0f0f" stroke-width="9" fill="none"/>
+    <path d="M905 238 L955 238 L948 252 L912 252 Z" fill="#141716"/>
+    <circle cx="930" cy="260" r="420" fill="url(#lamp-bloom)"/>
+    <ellipse cx="930" cy="256" rx="20" ry="7" fill="#fff1c8" filter="url(#halation)"/>
+    <!-- light cone through the haze -->
+    <path d="M912 256 L700 1180 L1180 1180 L948 256 Z" fill="#E3A82B" opacity="0.07" filter="url(#blur30)"/>
+  </g>
+
+  <!-- wet asphalt -->
+  <rect x="-20" y="986" width="1240" height="250" fill="url(#road)"/>
+  <g id="reflections" filter="url(#wet)">
+    <rect x="905" y="990" width="50" height="230" fill="#E3A82B" opacity="0.38"/>
+    <rect x="590" y="990" width="30" height="170" fill="#ffd27a" opacity="0.22"/>
+    <rect x="340" y="990" width="24" height="140" fill="#ffd27a" opacity="0.2"/>
+    <rect x="820" y="990" width="22" height="150" fill="#ffd27a" opacity="0.2"/>
+    <rect x="380" y="990" width="460" height="60" fill="#8a5a24" opacity="0.18"/>
+    <rect x="40" y="990" width="60" height="120" fill="#5fa3a0" opacity="0.16"/>
+    <rect x="1060" y="990" width="60" height="130" fill="#E3A82B" opacity="0.16"/>
+  </g>
+  <rect x="-20" y="986" width="1240" height="250" fill="#2d6b6e" opacity="0.05"/>
+
+  <!-- near kerb, where the figure sits -->
+  <rect x="-20" y="1222" width="1240" height="40" fill="url(#kerb)"/>
+  <rect x="-20" y="1262" width="1240" height="260" fill="#121110"/>
+  <rect x="-20" y="1222" width="1240" height="3" fill="#E3A82B" opacity="0.35"/>
+
+  <!-- the figure, from behind, seated on the kerb, lower third: head slightly bowed, elbows on knees -->
+  <g id="figure">
+    <ellipse cx="578" cy="1252" rx="140" ry="14" fill="#000" opacity="0.6" filter="url(#blur6)"/>
+    <!-- jacket body: dark, with burnt orange only where the lamp catches it -->
+    <path d="M492 1250 C486 1214 486 1172 494 1140 C500 1116 512 1100 532 1090 C548 1083 562 1078 578 1078 C594 1078 608 1083 624 1090 C644 1100 656 1116 662 1140 C670 1172 670 1214 664 1250 Z" fill="#24120d"/>
+    <path d="M600 1080 C620 1086 642 1098 654 1120 C666 1146 670 1190 666 1250 L626 1250 C632 1200 630 1150 618 1116 C612 1100 606 1090 600 1080 Z" fill="url(#jacket)" opacity="0.9" filter="url(#blur6)"/>
+    <!-- upper arms angling forward to the knees -->
+    <path d="M500 1128 C486 1150 478 1180 480 1214 C482 1232 488 1244 496 1250 L512 1250 C506 1222 506 1180 514 1146 Z" fill="#1c0f0b"/>
+    <path d="M656 1128 C670 1150 678 1180 676 1214 C674 1232 668 1244 660 1250 L644 1250 C650 1222 650 1180 642 1146 Z" fill="#7a2c14"/>
+    <!-- spine crease and hem -->
+    <path d="M578 1092 C576 1140 576 1196 578 1246" stroke="#140a07" stroke-width="3" opacity="0.6" fill="none"/>
+    <path d="M494 1240 C540 1246 616 1246 664 1240" stroke="#140a07" stroke-width="4" opacity="0.5" fill="none"/>
+    <!-- collar and neck -->
+    <path d="M552 1084 C560 1072 596 1072 604 1084 L598 1094 C588 1088 568 1088 558 1094 Z" fill="#160b08"/>
+    <path d="M566 1052 C566 1066 568 1078 572 1086 L586 1086 C590 1078 592 1066 592 1052 Z" fill="#2a1d16"/>
+    <!-- back of the head, bowed a little (no face) -->
+    <ellipse cx="579" cy="1030" rx="31" ry="36" fill="url(#hair)" transform="rotate(8 579 1030)"/>
+    <path d="M552 1012 C556 994 572 986 588 988 C600 990 608 998 610 1008" stroke="#0a0908" stroke-width="5" opacity="0.5" fill="none"/>
+    <!-- amber rim light from the lamp on the right -->
+    <path d="M606 1006 C612 1020 612 1038 604 1052" stroke="#E3A82B" stroke-width="2.5" opacity="0.7" fill="none" filter="url(#blur2)"/>
+    <path d="M630 1092 C652 1104 664 1124 670 1150" stroke="#f2b443" stroke-width="2.5" opacity="0.6" fill="none" filter="url(#blur2)"/>
+    <path d="M676 1176 C680 1200 678 1226 668 1248" stroke="#f2b443" stroke-width="2" opacity="0.45" fill="none" filter="url(#blur2)"/>
+  </g>
+
+  <!-- thin haze -->
+  <rect width="1200" height="1500" fill="#2d6b6e" opacity="0.035"/>
+  <ellipse cx="760" cy="760" rx="700" ry="240" fill="#E3A82B" opacity="0.035" filter="url(#blur30)"/>
+
+  <!-- fall-off to the page's near-black on every edge -->
+  <rect width="1200" height="1500" fill="url(#vignette)"/>
+  <rect width="1200" height="260" fill="url(#edge-top)"/>
+  <rect y="1300" width="1200" height="200" fill="url(#edge-bottom)"/>
+  <rect width="140" height="1500" fill="url(#edge-left)"/>
+  <rect x="1060" width="140" height="1500" fill="url(#edge-right)"/>
+
+  <!-- fine film grain -->
+  <rect width="1200" height="1500" filter="url(#grain)" opacity="0.16"/>
+</svg>
