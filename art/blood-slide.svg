@@ -61,7 +61,8 @@
   </defs>
 
   <!-- ============ pool (from the draft) ============ -->
-  <image id="pool" href="blood-pool.png" x="48" y="67" width="773" height="665"/>
+  <!-- shown at 60%: a stain, not gore. The slide above stays fully opaque. -->
+  <image id="pool" href="blood-pool.png" x="48" y="67" width="773" height="665" opacity="0.6"/>
 
   <!-- ============ slide ============ -->
   <g id="slide" transform="translate(901 235) rotate(-6) scale(0.7)">

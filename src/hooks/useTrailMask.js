@@ -11,7 +11,7 @@ export const BRUSH_JITTER = 0.12
 /** Fast strokes lay stamps up to this much larger (0.35 = +35%). */
 export const SPEED_BOOST = 0.35
 /** A stamp has fully faded this long after it was laid (ms). */
-export const FADE_MS = 4000
+export const FADE_MS = 2500
 /** The strongest the artwork is ever shown (0–1). */
 export const MAX_OPACITY = 1
 /** prefers-reduced-motion: the artwork sits still at this opacity instead. */
@@ -165,7 +165,11 @@ export function useTrailMask({ hostRef, canvasRef, nameRef, inkRef, image, getRe
           artLow = document.createElement('canvas')
           artLow.width = trail.width
           artLow.height = trail.height
-          artLow.getContext('2d').drawImage(bmp, 0, 0, trail.width, trail.height)
+          // twice, added: a see-through layer (the 60% pool) still flips the letters fully
+          const lc = artLow.getContext('2d')
+          lc.globalCompositeOperation = 'lighter'
+          lc.drawImage(bmp, 0, 0, trail.width, trail.height)
+          lc.drawImage(bmp, 0, 0, trail.width, trail.height)
         }
         if (reduced) drawStatic()
       })

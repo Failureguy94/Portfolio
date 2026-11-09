@@ -1,4 +1,4 @@
-// Checks the hero blood reveal: trail screenshots (mid-trail, 4.5 s later), idle loop, long tasks, CLS, reduced motion, sweep.
+// Checks the hero blood reveal: trail screenshots (mid-trail, 3 s later), idle loop, long tasks, CLS, reduced motion, sweep.
 // Usage: node scripts/check-reveal.js [baseUrl] [outDir]
 import { mkdirSync } from 'node:fs'
 import { chromium } from 'playwright'
@@ -75,8 +75,8 @@ for (const width of [390, 768, 1440]) {
   const longDuringMove = await page.evaluate(() => window.__long.filter((d) => d > 50))
   check(`${width}: no long tasks over 50ms while moving`, longDuringMove.length === 0, longDuringMove.join(', '))
 
-  await page.waitForTimeout(4500)
-  await page.screenshot({ path: `${out}/${width}-b-after-4500ms.png` })
+  await page.waitForTimeout(3000)
+  await page.screenshot({ path: `${out}/${width}-b-after-3000ms.png` })
   const state = await page.evaluate(() => {
     const c = document.querySelector('[data-blood-reveal]')
     const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data
@@ -84,7 +84,7 @@ for (const width of [390, 768, 1440]) {
     for (let i = 3; i < d.length; i += 4) max = Math.max(max, d[i])
     return { running: c.dataset.running, maxAlpha: max, hidden: c.getAttribute('aria-hidden'), pe: getComputedStyle(c).pointerEvents }
   })
-  check(`${width}: fully hidden 4.5s after the pointer stops`, state.maxAlpha === 0, `max alpha ${state.maxAlpha}`)
+  check(`${width}: fully hidden 3s after the pointer stops`, state.maxAlpha === 0, `max alpha ${state.maxAlpha}`)
   check(`${width}: loop stopped when idle`, state.running === 'false')
   const rafIdle = await page.evaluate(async () => {
     const before = window.__raf
@@ -125,7 +125,7 @@ for (const width of [390, 1440]) {
   }
   check(`cast ${width}: loop runs while trail is visible`, (await page.getAttribute('[data-cast-reveal]', 'data-running')) === 'true')
   await page.screenshot({ path: `${out}/cast-${width}-a-mid-trail.png` })
-  await page.waitForTimeout(4500)
+  await page.waitForTimeout(3000)
   const s = await page.evaluate(() => {
     const c = document.querySelector('[data-cast-reveal]')
     const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data
@@ -133,7 +133,7 @@ for (const width of [390, 1440]) {
     for (let i = 3; i < d.length; i += 4) max = Math.max(max, d[i])
     return { max, running: c.dataset.running, hidden: c.getAttribute('aria-hidden'), pe: getComputedStyle(c).pointerEvents }
   })
-  await page.screenshot({ path: `${out}/cast-${width}-b-after-4500ms.png` })
+  await page.screenshot({ path: `${out}/cast-${width}-b-after-3000ms.png` })
   check(`cast ${width}: hidden again and loop stopped`, s.max === 0 && s.running === 'false', `alpha ${s.max}, running ${s.running}`)
   check(`cast ${width}: aria-hidden, ignores the pointer`, s.hidden === 'true' && s.pe === 'none')
   const card = page.locator('#cast section').first()

@@ -59,7 +59,7 @@ Results are cached for five minutes per tab.
 | `node scripts/screenshots.js [url] [dir]` | Screenshots every section at 390, 768 and 1440 px |
 | `node scripts/verify.js [url]` | Checks horizontal scroll, the countdown and Skip credits by keyboard, link `rel`, external links, the resume, OG tags, the blood artwork file and its `aria-hidden` layer, no TODO strings, and reduced-motion behaviour |
 | `npm run art` | Re-renders the hidden hero artwork and the Cast & Crew night scene (see below) |
-| `node scripts/check-reveal.js [url] [dir]` | Screenshots the hero reveal mid-trail and 4.5 s later at 390, 768 and 1440 px; checks the loop stops when idle, long tasks, CLS, the sweep and reduced motion; also checks the Cast & Crew reveal |
+| `node scripts/check-reveal.js [url] [dir]` | Screenshots the hero reveal mid-trail and 3 s later at 390, 768 and 1440 px; checks the loop stops when idle, long tasks, CLS, the sweep and reduced motion; also checks the Cast & Crew reveal |
 
 The Playwright scripts need a browser once: `npx playwright install chromium`.
 
@@ -71,7 +71,7 @@ A blood pool and a microscope slide are hidden behind the hero name. Moving the 
 - **Regenerate:** `npm run art` renders `public/art/blood-slide.webp` (transparent, 2960×1520, about 140 KB) and a PNG fallback with Playwright. It also prints the contrast of the black name over the pool (the draft's deep red gives about 2.3–2.6:1, below the 3:1 large-text guideline, while the trail is showing) and warns if the WebP exceeds 250 KB. `--preview out.png` saves the art over the hero paper colour.
 - **Tune the trail:** constants at the top of `src/hooks/useTrailMask.js`:
   - `BRUSH_RADIUS` (140 px at a 1440 px hero; scales with width, clamped by `BRUSH_MIN`/`BRUSH_MAX`, 90–170), `BRUSH_JITTER`, `SPEED_BOOST`
-  - `FADE_MS`: how long a stamp takes to disappear completely (4000 ms)
+  - `FADE_MS`: how long a stamp takes to disappear completely (2500 ms)
   - `MAX_OPACITY` (1): the art's strongest opacity
   - `INK_GAIN` (3): how crisply the name's letters switch to paper colour over the revealed blood (higher = sharper edge)
   - `STATIC_OPACITY` (0.12): the still art shown under reduced motion
