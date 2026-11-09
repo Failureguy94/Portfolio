@@ -72,10 +72,11 @@ A blood pool and a microscope slide are hidden behind the hero name. Moving the 
 - **Tune the trail:** constants at the top of `src/hooks/useTrailMask.js`:
   - `BRUSH_RADIUS` (140 px at a 1440 px hero; scales with width, clamped by `BRUSH_MIN`/`BRUSH_MAX`, 90–170), `BRUSH_JITTER`, `SPEED_BOOST`
   - `FADE_MS`: how long a stamp takes to disappear completely (4000 ms)
-  - `MAX_OPACITY` (0.9): the art's strongest opacity. Lowering it also lightens the pool behind the name
+  - `MAX_OPACITY` (1): the art's strongest opacity
+  - `INK_GAIN` (3): how crisply the name's letters switch to paper colour over the revealed blood (higher = sharper edge)
   - `STATIC_OPACITY` (0.12): the still art shown under reduced motion
   - `SWEEP_MS`: length of the discovery sweep
-- **Behaviour:** the animation loop only runs while some trail is visible, and stops when the hero is offscreen or the tab is hidden. The layer is `aria-hidden`, ignores the pointer, and is absolutely positioned, so it cannot block clicks or shift layout. If the artwork fails to load, nothing happens.
+- **Behaviour:** the animation loop only runs while some trail is visible, and stops when the hero is offscreen or the tab is hidden. The layer is `aria-hidden`, ignores the pointer, and is absolutely positioned, so it cannot block clicks or shift layout. If the artwork fails to load, nothing happens. Where the revealed blood sits under the hero name, the letters turn paper-coloured: a canvas inside the `<h1>` redraws the name in paper colour and shows it only where the artwork is revealed, so it follows the name's parallax and keeps the cut-out letters readable (about 9:1 against the blood).
 
 ## Motion and accessibility
 

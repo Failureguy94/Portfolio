@@ -13,7 +13,7 @@ export const SPEED_BOOST = 0.35
 /** A stamp has fully faded this long after it was laid (ms). */
 export const FADE_MS = 4000
 /** The strongest the artwork is ever shown (0–1). */
-export const MAX_OPACITY = 0.9
+export const MAX_OPACITY = 1
 /** prefers-reduced-motion: the artwork sits still at this opacity instead. */
 export const STATIC_OPACITY = 0.12
 /** Length of the one-off discovery sweep (ms). */
@@ -21,10 +21,11 @@ export const SWEEP_MS = 1200
 
 const MAX_DPR = 2
 const TRAIL_SCALE = 0.5 // the trail is soft, so it lives at half resolution
-const STAMP_ALPHA = 0.55
+const STAMP_ALPHA = 0.85
 const SPACING = 0.28 // gap between interpolated stamps, as a fraction of the radius
 const TAU = FADE_MS / 3.6 // exponential decay: ~2.7% left at FADE_MS, then the trail is cleared
 const MIN_DECAY_STEP = 0.06 // batch tiny decay steps so 8-bit alpha cannot get stuck
+const INK_GAIN = 3 // the letter mask is the trail × this (clamped), so letters flip to paper colour crisply
 
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v))
 const jitter = () => 1 + (Math.random() * 2 - 1) * BRUSH_JITTER
@@ -36,8 +37,8 @@ function makeBrush() {
   const g = c.getContext('2d')
   const grad = g.createRadialGradient(64, 64, 0, 64, 64, 64)
   grad.addColorStop(0, 'rgba(255,255,255,1)')
-  grad.addColorStop(0.45, 'rgba(255,255,255,0.85)')
-  grad.addColorStop(0.75, 'rgba(255,255,255,0.32)')
+  grad.addColorStop(0.55, 'rgba(255,255,255,1)')
+  grad.addColorStop(0.8, 'rgba(255,255,255,0.5)')
   grad.addColorStop(1, 'rgba(255,255,255,0)')
   g.fillStyle = grad
   g.fillRect(0, 0, 128, 128)
@@ -59,8 +60,10 @@ function sweepPoint(t) {
  * Reveals `image` through a soft, fading pointer trail on `canvasRef`.
  * `hostRef` receives the pointer events; `getRect()` returns where the artwork sits,
  * in the canvas's containing block ({ x, y, w, h } in CSS px).
+ * `nameRef` / `inkRef`: the hero name and a canvas inside it. Where the revealed blood sits under
+ * the name, the letters are redrawn there in paper colour, so they read as cut out of the blood.
  */
-export function useTrailMask({ hostRef, canvasRef, image, getRect, reduced, sweep, onSweepStart }) {
+export function useTrailMask({ hostRef, canvasRef, nameRef, inkRef, image, getRect, reduced, sweep, onSweepStart }) {
   const ctrl = useRef(null)
   const getRectRef = useRef(getRect)
   const onSweepStartRef = useRef(onSweepStart)
@@ -78,6 +81,15 @@ export function useTrailMask({ hostRef, canvasRef, image, getRect, reduced, swee
     const trail = document.createElement('canvas')
     const tctx = trail.getContext('2d')
     const brush = makeBrush()
+    const name = nameRef?.current
+    const ink = reduced ? null : inkRef?.current
+    const ictx = ink?.getContext('2d')
+    let letters = null // the name in paper colour, pre-drawn at ink size
+    const mask = ink ? document.createElement('canvas') : null // letter mask, at trail resolution
+    const mctx = mask?.getContext('2d')
+    let artLow = null // the artwork's alpha at trail resolution
+    let inkPad = 0
+    let dprNow = 1
     let art = null
     let rect = null
     let base = BRUSH_RADIUS
@@ -135,6 +147,12 @@ export function useTrailMask({ hostRef, canvasRef, image, getRect, reduced, swee
         }
         art?.close?.()
         art = bmp
+        if (mask) {
+          artLow = document.createElement('canvas')
+          artLow.width = trail.width
+          artLow.height = trail.height
+          artLow.getContext('2d').drawImage(bmp, 0, 0, trail.width, trail.height)
+        }
         if (reduced) drawStatic()
       })
     }
@@ -155,10 +173,89 @@ export function useTrailMask({ hostRef, canvasRef, image, getRect, reduced, swee
       canvas.height = Math.round(r.h * dpr)
       trail.width = Math.ceil(r.w * TRAIL_SCALE)
       trail.height = Math.ceil(r.h * TRAIL_SCALE)
+      if (mask) {
+        mask.width = trail.width
+        mask.height = trail.height
+      }
       base = clamp((BRUSH_RADIUS * host.clientWidth) / 1440, BRUSH_MIN, BRUSH_MAX)
       box = null
+      dprNow = dpr
       if (!reduced) reset()
       scaleArt(canvas.width, canvas.height)
+      drawLetters()
+    }
+
+    // Pre-draw the hero name in paper colour, glyph for glyph over the real text.
+    function drawLetters() {
+      if (!ink || !name) return
+      const dpr = dprNow
+      const cs = getComputedStyle(name)
+      const size = parseFloat(cs.fontSize)
+      inkPad = Math.ceil(size * 0.25)
+      const w = name.offsetWidth + inkPad * 2
+      const h = name.offsetHeight + inkPad * 2
+      ink.style.left = `${-inkPad}px`
+      ink.style.top = `${-inkPad}px`
+      ink.style.width = `${w}px`
+      ink.style.height = `${h}px`
+      ink.width = Math.round(w * dpr)
+      ink.height = Math.round(h * dpr)
+      letters = document.createElement('canvas')
+      letters.width = ink.width
+      letters.height = ink.height
+      const g = letters.getContext('2d')
+      g.scale(dpr, dpr)
+      g.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`
+      if ('letterSpacing' in g) g.letterSpacing = cs.letterSpacing === 'normal' ? '0px' : cs.letterSpacing
+      g.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--color-paper').trim() || '#f0e6d0'
+      g.textBaseline = 'alphabetic'
+      // measure in layout space: the on-screen box divided by the current zoom (push-in scale)
+      const nb = name.getBoundingClientRect()
+      const zoom = nb.width / name.offsetWidth || 1
+      const range = document.createRange()
+      for (const span of name.children) {
+        const node = span.firstChild
+        if (!node || node.nodeType !== 3) continue
+        range.selectNodeContents(node)
+        const r = range.getBoundingClientRect()
+        const text = cs.textTransform === 'uppercase' ? node.textContent.toUpperCase() : node.textContent
+        const ascent = g.measureText(text).fontBoundingBoxAscent
+        const x = (r.left - nb.left) / zoom + inkPad
+        const y = (r.top - nb.top) / zoom + inkPad + ascent
+        g.fillText(text, x, y)
+      }
+      ictx.clearRect(0, 0, ink.width, ink.height)
+    }
+
+    // Show the paper-coloured letters only where the revealed artwork is.
+    function drawInk() {
+      if (!ink || !letters || !name || !artLow) return
+      // mask = trail boosted (so its soft edge is short) ∩ the artwork's own shape
+      mctx.clearRect(0, 0, mask.width, mask.height)
+      mctx.globalCompositeOperation = 'lighter'
+      for (let i = 0; i < INK_GAIN; i++) mctx.drawImage(trail, 0, 0)
+      mctx.globalCompositeOperation = 'destination-in'
+      mctx.drawImage(artLow, 0, 0)
+      mctx.globalCompositeOperation = 'source-over'
+
+      ictx.clearRect(0, 0, ink.width, ink.height)
+      ictx.drawImage(letters, 0, 0)
+      // where the name sits relative to the artwork, including its parallax shift
+      const m = new DOMMatrixReadOnly(getComputedStyle(name).transform === 'none' ? undefined : getComputedStyle(name).transform)
+      const nx = name.offsetLeft + m.e - inkPad
+      const ny = name.offsetTop + m.f - inkPad
+      ictx.globalCompositeOperation = 'destination-in'
+      ictx.drawImage(mask, (rect.x - nx) * dprNow, (rect.y - ny) * dprNow, canvas.width, canvas.height)
+      // outside the artwork there is nothing to keep
+      ictx.globalCompositeOperation = 'destination-out'
+      ictx.fillStyle = '#000'
+      const ax = (rect.x - nx) * dprNow
+      const ay = (rect.y - ny) * dprNow
+      ictx.fillRect(0, 0, ink.width, Math.max(0, ay))
+      ictx.fillRect(0, ay + canvas.height, ink.width, ink.height)
+      ictx.fillRect(0, 0, Math.max(0, ax), ink.height)
+      ictx.fillRect(ax + canvas.width, 0, ink.width, ink.height)
+      ictx.globalCompositeOperation = 'source-over'
     }
 
     function reset() {
@@ -166,6 +263,7 @@ export function useTrailMask({ hostRef, canvasRef, image, getRect, reduced, swee
       setRunning(false)
       tctx.clearRect(0, 0, trail.width, trail.height)
       ctx.clearRect(0, 0, canvas.width, canvas.height)
+      if (ink) ictx.clearRect(0, 0, ink.width, ink.height)
       pointer.last = null
       sweeper.last = null
       lastStampAt = -Infinity
@@ -250,6 +348,7 @@ export function useTrailMask({ hostRef, canvasRef, image, getRect, reduced, swee
       ctx.drawImage(trail, 0, 0, canvas.width, canvas.height)
       ctx.globalCompositeOperation = 'source-over'
       ctx.globalAlpha = 1
+      drawInk()
 
       raf = requestAnimationFrame(frame)
     }
@@ -346,7 +445,7 @@ export function useTrailMask({ hostRef, canvasRef, image, getRect, reduced, swee
       document.removeEventListener('visibilitychange', onVisibility)
       window.removeEventListener('scroll', onScroll)
     }
-  }, [hostRef, canvasRef, image, reduced])
+  }, [hostRef, canvasRef, nameRef, inkRef, image, reduced])
 
   useEffect(() => {
     if (sweep && image && !reduced) ctrl.current?.sweep()

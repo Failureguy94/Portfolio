@@ -66,7 +66,7 @@ function sweepNotSeen() {
 }
 
 /** The blood-slide artwork, hidden in the hero and wiped into view by the pointer. Decorative. */
-export function BloodReveal({ hostRef, nameRef, ready }) {
+export function BloodReveal({ hostRef, nameRef, inkRef, ready }) {
   const reduced = usePrefersReducedMotion()
   const canvasRef = useRef(null)
   const [image, setImage] = useState(null)
@@ -96,7 +96,7 @@ export function BloodReveal({ hostRef, nameRef, ready }) {
     }
   }, [])
 
-  useTrailMask({ hostRef, canvasRef, image, getRect, reduced, sweep, onSweepStart })
+  useTrailMask({ hostRef, canvasRef, nameRef, inkRef, image, getRect, reduced, sweep, onSweepStart })
 
   return (
     <canvas

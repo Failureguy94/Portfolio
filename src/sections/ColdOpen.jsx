@@ -8,6 +8,7 @@ export function ColdOpen({ ready = true }) {
   const still = usePrefersReducedMotion()
   const frameRef = useRef(null)
   const nameRef = useRef(null)
+  const inkRef = useRef(null)
   const raf = useRef(0)
 
   function onMove(e) {
@@ -35,7 +36,7 @@ export function ColdOpen({ ready = true }) {
       <div ref={frameRef} onPointerMove={onMove} className="relative flex-1 touch-pan-y overflow-hidden bg-paper text-ink">
         <div className="push-in absolute inset-0">
           {/* hidden artwork: below the name and buttons */}
-          <BloodReveal hostRef={frameRef} nameRef={nameRef} ready={ready} />
+          <BloodReveal hostRef={frameRef} nameRef={nameRef} inkRef={inkRef} ready={ready} />
           <div className="parallax absolute right-[7vw] top-[12%]" style={{ '--depth': 34 }}>
             <span aria-hidden="true" className="float block h-[9px] w-[22vw] -rotate-6 bg-mustard md:h-3 md:w-[14vw]" />
           </div>
@@ -50,6 +51,8 @@ export function ColdOpen({ ready = true }) {
           >
             <span className="block md:inline">{profile.nameLines[0]}</span>{' '}
             <span className="block pl-[4vw] md:inline md:pl-0">{profile.nameLines[1]}</span>
+            {/* the name in paper colour, shown only over the revealed blood (drawn by BloodReveal) */}
+            <canvas ref={inkRef} aria-hidden="true" className="pointer-events-none absolute left-0 top-0 h-0 w-0" />
           </h1>
         </div>
 
